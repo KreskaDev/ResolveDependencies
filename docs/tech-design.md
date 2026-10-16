@@ -92,9 +92,73 @@ Exit codes:
 | 1 | I/O error (missing file, no permission) |
 | 2 | input format error (stdout contains `FAIL`) |
 
-## 4. Components
+## 4. Core design
 
-### 4.1 Core
+### 4.1 Domain model
+
+| Type                  | Kind            | Purpose                                                                                  |
+|-----------------------|-----------------|------------------------------------------------------------------------------------------|
+| `PackageVersion`      | `record struct` | `(Name, Version)` pair. Value equality is what the whole algorithm relies on.            |
+| `Dependency`          | `record`        | `Dependent` → `Requirement`, both `PackageVersion`.                                      |
+| `InstallationRequest` | `record`        | Parsed input: list of packages to install + list of dependencies.                        |
+| `ValidationResult`    | `enum`          | `Pass` / `Fail`. Mapped to the `PASS` / `FAIL` strings only at the output boundary.      |
+
+### 4.2 Components
+
+```
+ text ──► InputParser ──► InstallationRequest ──► DependencyValidator ──► ValidationResult
+```
+
+- **`InputParser`** – turns the raw text of one input file into an `InstallationRequest`.
+  Pure function, throws a `FormatException` with a line number on malformed input.
+- **`DependencyValidator`** – takes an `InstallationRequest` and decides `Pass` / `Fail`.
+  Pure function, no exceptions for valid-but-failing inputs.
+- **`DependencyResolver`** (facade) – `Resolve(string input) => ValidationResult`. The one
+  entry point the console app calls; composes parser and validator.
+
+### 4.3 Validation algorithm
+
+1. Build a lookup `PackageVersion → list of required PackageVersion` from the dependency
+   list (adjacency list of a directed graph).
+2. Start a traversal (BFS/DFS) from every package in the install list.
+3. Maintain `Dictionary<string packageName, string version>` of everything that will end up
+   installed (requested packages plus everything transitively required).
+4. When visiting a `PackageVersion`:
+   - if the name is already present with a **different** version → `Fail`, stop;
+   - if it is already present with the **same** version → already visited, skip
+     (this is what makes cycles and self-dependencies terminate);
+   - otherwise record it and enqueue its requirements.
+5. If the traversal finishes without a conflict → `Pass`.
+
+Complexity is linear in the number of packages and dependencies. Only versions that are
+actually reachable from the install list matter; dependencies of versions nobody installs are
+ignored (see `input004`: `A,1 → B,1` is irrelevant because `A,2` is installed, not `A,1`).
+
+### 4.4 Input format decisions
+
+The specification in `abstract.md` is minimal; the golden files in `goldenData/` show the
+real edge cases. The parser is defined to handle all of them:
+
+| Case                                                     | Example                                          | Decision                                                                                                                        |
+|----------------------------------------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Trailing blank lines                                     | most files                                       | Ignored. Lines are trimmed; empty lines at the end of the file are skipped.                                                     |
+| Missing dependency section                               | `input008`                                       | Treated as zero dependencies. Only the install section is required.                                                             |
+| One dependency line with several requirements            | `input002`: `B,2,A,1,C,1`                        | Parsed as `B,2` depending on **each** following `p,v` pair (`A,1` and `C,1`). A line must have an even number of fields, at least four. |
+| Self-dependency                                          | `input003`: `B,1,B,1`                            | Allowed; handled naturally by the visited check.                                                                                |
+| Cycle                                                    | `input006`: `A,1 → B,2 → A,1`                    | Allowed; handled by the visited check.                                                                                          |
+| Dependency of a version that is never installed          | `input009`: `A,1,B,2` while `A,2` is installed   | Ignored; only reachable versions are followed.                                                                                  |
+| Package or version containing `,`                        | n/a                                              | Not supported, guaranteed by the task statement.                                                                                |
+| Line endings                                             | n/a                                              | `
+` and `
+` both accepted.                                                                                                  |
+
+Anything else (non-numeric count, fewer lines than declared, odd number of fields) is a
+`FormatException` from the parser, which the console app reports as an error for that file
+and continues with the next one.
+
+## 5. Components
+
+### 5.1 Core
 
 - Pure functions, no I/O, no knowledge of files or commas.
 - Input: `InstallRequest` (section 2.1). Assumes the data is structurally valid. Does not
@@ -105,7 +169,7 @@ Exit codes:
   tests; the console app prints only `PASS`/`FAIL`.
 - Unit-tested in isolation.
 
-### 4.2 Console app
+### 5.2 Console app
 
 - Responsible for: arguments, reading a file or stdin, sanitize + parse, calling the core,
   writing the result, exit codes.
@@ -117,7 +181,7 @@ Exit codes:
   - `app` without arguments reads stdin.
   - Both variants are supported because the runner's invocation method is unknown.
 
-### 4.3 Data model
+### 5.3 Data model
 
 ```
 PackageRef   { Package: string, Version: string }   -- value type, exact comparison
@@ -129,7 +193,7 @@ Result = Valid | Invalid(Conflict[])
 Conflict { Package: string, Versions: Set<string> }
 ```
 
-## 5. Algorithm (core)
+## 6. Algorithm (core)
 
 Graph traversal of the dependency graph starting from the install list, with a
 per-package version check.
@@ -164,19 +228,19 @@ Properties:
 - Self-dependency (S3) is handled naturally by `visited`.
 - Rules for unreachable versions (S4) are never visited.
 
-## 6. Tests
+## 7. Tests
 
-### 6.1 Core unit tests
+### 7.1 Core unit tests
 
 One case per finding S1-S11 plus the examples from `abstract.md`. They do not read
 files; they build `InstallRequest` in code.
 
-### 6.2 Parser tests
+### 7.2 Parser tests
 
 One case per rule F2-F8, including negative cases (expected parse error with the
 correct line number).
 
-### 6.3 Acceptance tests on `goldenData/`
+### 7.3 Acceptance tests on `goldenData/`
 
 The runner iterates over `inputNNN.txt` / `outputNNN.txt` pairs, runs the full pipeline
 (parser + core) and compares the result with the expected value after `trim()`. Adding a
