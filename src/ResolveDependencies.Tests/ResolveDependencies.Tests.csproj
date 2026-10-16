@@ -18,9 +18,4 @@
     <ProjectReference Include="..\ResolveDependencies.Core\ResolveDependencies.Core.csproj" />
   </ItemGroup>
 
-  <!-- Golden test cases: linked from docs/story so goldenData/ stays the single source of truth. -->
-  <ItemGroup>
-    <Content Include="..\..\docs\story\goldenData\*.txt" Link="goldenData\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>
