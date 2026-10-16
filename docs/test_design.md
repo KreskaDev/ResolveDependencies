@@ -18,10 +18,13 @@ dependent first and its requirements after it).
 
 ## Naming
 
-Test classes are named after the class under test with the `Tests` suffix:
+Test classes are named after the class under test with the `Tests` suffix. When one
+class is tested from two angles, each test class carries a word naming its angle before
+the suffix:
 
 ```
 <ClassUnderTest>Tests
+<ClassUnderTest><Angle>Tests        e.g. DependencyResolverRuleTests
 ```
 
 Test methods follow the `UnitOfWork_StateUnderTest_ExpectedBehavior` pattern. The three
@@ -103,6 +106,6 @@ Coverage of the current data:
 | 008 | PASS | F3 missing dependency section |
 | 009 | PASS | S1 long chain without conflict |
 
-Missing cases worth adding as own file pairs: N = 0, duplicate on the install list, two
-versions of the same package on the install list, and `ERROR` cases: blank line inside a
-section, mismatched N/M, odd number of fields.
+The golden data has no `ERROR` case, no empty install list (N = 0), no duplicate on the
+install list and no package in two versions on the install list. These cases are covered
+by the parser and resolver unit tests only.
