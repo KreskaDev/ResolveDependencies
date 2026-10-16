@@ -38,11 +38,11 @@ public sealed class CommandLineParser
             }
             else if (input is null)
             {
-                input = arg;
+                input = Folder(arg);
             }
             else if (output is null)
             {
-                output = arg;
+                output = Folder(arg);
             }
             else
             {
@@ -65,7 +65,17 @@ public sealed class CommandLineParser
             throw new CommandLineException($"Missing value for {args[index]}");
         }
 
-        return args[++index];
+        return Folder(args[++index]);
+    }
+
+    private static string Folder(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new CommandLineException("A folder must not be empty");
+        }
+
+        return value;
     }
 
     private static string Assign(string? current, string value, string what)

@@ -100,6 +100,16 @@ public class CommandLineParserTests
         Assert.Throws<CommandLineException>(() => _parser.Parse(["in", option]));
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Parse_EmptyFolder_ThrowsCommandLineException(string folder)
+    {
+        Assert.Throws<CommandLineException>(() => _parser.Parse([folder]));
+        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", folder]));
+        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--output", folder]));
+    }
+
     [Fact]
     public void Parse_UnknownOption_ThrowsCommandLineException()
     {

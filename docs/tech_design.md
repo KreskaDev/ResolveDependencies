@@ -61,7 +61,8 @@ Each folder may be given positionally (input first, output second) or by its opt
 any order, and the two styles may be mixed in one call. Each folder is given at most
 once; the input folder is required, the output folder defaults to the input folder. An
 option without a value, an unknown option (any argument starting with `--`), a third
-positional argument or a folder given twice is a usage error.
+positional argument, a folder given twice or an empty folder (blank string) is a usage
+error.
 
 Every file in the input folder whose name starts with `input` and ends with `.txt` is
 processed in ordinal name order. The match is exact, as in `docs/story/goldenData/`:
