@@ -40,7 +40,7 @@ DependencyValidatorTests.Validate_TransitiveConflict_ReturnsFail
 ### 7.1 Core unit tests
 
 One case per finding S1-S11 plus the examples from `docs/story/ResolveDependencies.md`. They do not read
-files; they build `InstallRequest` in code.
+files; they build `InstallationRequest` in code.
 
 ### 7.2 Parser tests
 

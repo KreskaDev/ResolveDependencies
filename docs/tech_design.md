@@ -27,18 +27,19 @@ related:
 
 ## 2. Input format
 
-### 2.1 Canonical format (what the core sees)
+### 2.1 Canonical format (what the validator sees)
 
-The core does not read files. It receives an already parsed structure:
+The validator does not read files or text. It receives the structure produced by the
+parser:
 
 ```
-InstallRequest
+InstallationRequest
   packages:     list of pairs (package, version)            -- to be installed
   dependencies: list of (package, version) -> list of (package, version)
 ```
 
 All strings are non-empty and contain no comma. Several entries for the same
-`(package, version)` pair in `dependencies` are allowed; the core merges them.
+`(package, version)` pair in `dependencies` are allowed; the validator merges them.
 
 ### 2.2 Text file format (what the console app reads)
 
@@ -175,10 +176,16 @@ and continues with the next one.
 
 ### 5.1 Core
 
-- Pure functions, no I/O, no knowledge of files or commas.
-- Input: `InstallRequest` (section 2.1). Assumes the data is structurally valid. Does not
-  validate the format. May check invariants (non-empty strings) and throw a programming
-  error if they are broken.
+- Pure functions, no I/O, no knowledge of files or folders.
+- **Parser** (`InputParser`, own namespace) implements rules F1-F8. It is the only place
+  that knows the text format. It receives the raw text of one input file and returns an
+  `InstallationRequest`, or throws a `FormatException` carrying the line number and reason.
+- **Validator** (`DependencyValidator`) takes an `InstallationRequest` (section 2.1).
+  Assumes the data is structurally valid and does not validate the format. May check
+  invariants (non-empty strings) and throw a programming error if they are broken.
+- **Facade** (`DependencyResolver`) composes parser and validator for callers that hold
+  text. The validator is also exposed directly for callers that already hold an
+  `InstallationRequest`.
 - Output: `ValidationResult`, a list of `Conflict`s (package name with the set of required
   versions), valid when empty. The output file gets only `PASS`/`FAIL`; the conflicts are
   printed on the console for diagnostics and asserted in unit tests.
@@ -186,11 +193,8 @@ and continues with the next one.
 
 ### 5.2 Console app
 
-- Responsible for: arguments, reading a file or stdin, sanitize + parse, calling the core,
-  writing the result, exit codes.
-- **Sanitizer/Parser** implements rules F1-F8. It is the only place that knows the text
-  format. It receives raw text and returns an `InstallRequest` or a parse error with a
-  line number.
+- Responsible for: arguments, reading a file or stdin, calling the core, writing the
+  result, exit codes. Contains no parsing code.
 - Invocation:
   - `app <input-file>` reads the file,
   - `app` without arguments reads stdin.
@@ -199,10 +203,10 @@ and continues with the next one.
 ### 5.3 Data model
 
 ```
-PackageRef   { Package: string, Version: string }   -- value type, exact comparison
-InstallRequest {
-  Packages:     PackageRef[]
-  Dependencies: Map<PackageRef, PackageRef[]>
+PackageVersion   { Name: string, Version: string }   -- value type, exact comparison
+InstallationRequest {
+  Packages:     PackageVersion[]
+  Dependencies: Map<PackageVersion, PackageVersion[]>
 }
 ValidationResult { Conflicts: Conflict[] }           -- valid when Conflicts is empty
 Conflict         { Package: string, Versions: Set<string> }
@@ -215,8 +219,8 @@ per-package version check.
 
 ```
 required  : Map<package, version>   -- package -> the only allowed version
-visited   : Set<PackageRef>
-queue     : Queue<PackageRef>  <- all Packages from InstallRequest
+visited   : Set<PackageVersion>
+queue     : Queue<PackageVersion>  <- all Packages from InstallationRequest
 conflicts : Map<package, Set<version>>
 
 while queue not empty:
@@ -224,10 +228,10 @@ while queue not empty:
   if ref in visited: continue
   visited.add(ref)
 
-  if required[ref.Package] exists and != ref.Version:
-      conflicts[ref.Package] += {required[ref.Package], ref.Version}
+  if required[ref.Name] exists and != ref.Version:
+      conflicts[ref.Name] += {required[ref.Name], ref.Version}
       continue                      -- do not descend, the result is FAIL anyway
-  required[ref.Package] = ref.Version
+  required[ref.Name] = ref.Version
 
   for dep in Dependencies[ref] (or empty):
       queue.push(dep)
