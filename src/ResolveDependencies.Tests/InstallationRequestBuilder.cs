@@ -1,4 +1,4 @@
-using ResolveDependencies.Core;
+using ResolveDependencies.Core.Model;
 
 namespace ResolveDependencies.Tests;
 

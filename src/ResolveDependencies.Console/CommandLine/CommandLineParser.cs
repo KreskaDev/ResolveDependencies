@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.CommandLine;
 
 /// <summary>
 /// Reads the input and output folder from the arguments. Each folder may be given

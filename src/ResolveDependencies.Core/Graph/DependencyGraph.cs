@@ -1,4 +1,6 @@
-namespace ResolveDependencies.Core;
+using ResolveDependencies.Core.Model;
+
+namespace ResolveDependencies.Core.Graph;
 
 /// <summary>
 /// Directed graph of the dependency rules: every package version maps to the package

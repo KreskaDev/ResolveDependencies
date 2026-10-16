@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Core;
+namespace ResolveDependencies.Core.Model;
 
 /// <summary>
 /// Parsed input: the packages to install plus the dependency rules.

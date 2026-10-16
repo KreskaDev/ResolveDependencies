@@ -1,6 +1,7 @@
 using ResolveDependencies.Core;
+using ResolveDependencies.Core.Validation;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Core;
 
 /// <summary>
 /// One case per semantic rule S1-S11 from docs/algorithm_spec.md plus the two examples

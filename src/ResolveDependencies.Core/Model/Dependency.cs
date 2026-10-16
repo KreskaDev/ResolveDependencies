@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Core;
+namespace ResolveDependencies.Core.Model;
 
 /// <summary>
 /// One dependency rule: <paramref name="Dependent"/> requires <paramref name="Requirement"/>.

@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.Input;
 
 /// <summary>
 /// Turns the raw text of an input file into clean lines: line endings <c>\n</c> and

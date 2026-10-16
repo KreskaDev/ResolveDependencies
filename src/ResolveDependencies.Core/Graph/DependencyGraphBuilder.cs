@@ -1,4 +1,6 @@
-namespace ResolveDependencies.Core;
+using ResolveDependencies.Core.Model;
+
+namespace ResolveDependencies.Core.Graph;
 
 /// <summary>
 /// Domain service building the <see cref="DependencyGraph"/> from the dependency rules.

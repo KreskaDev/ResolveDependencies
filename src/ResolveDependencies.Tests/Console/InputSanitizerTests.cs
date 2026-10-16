@@ -1,6 +1,6 @@
-using ResolveDependencies.Console;
+using ResolveDependencies.Console.Input;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Console;
 
 /// <summary>
 /// Golden cases from docs/story/goldenData. Each test holds the exact text of one

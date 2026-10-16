@@ -1,6 +1,6 @@
-using ResolveDependencies.Core;
+using ResolveDependencies.Core.Graph;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Core;
 
 public class DependencyGraphBuilderTests
 {

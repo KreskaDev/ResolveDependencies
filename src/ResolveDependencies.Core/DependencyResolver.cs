@@ -1,3 +1,7 @@
+using ResolveDependencies.Core.Graph;
+using ResolveDependencies.Core.Model;
+using ResolveDependencies.Core.Validation;
+
 namespace ResolveDependencies.Core;
 
 /// <summary>

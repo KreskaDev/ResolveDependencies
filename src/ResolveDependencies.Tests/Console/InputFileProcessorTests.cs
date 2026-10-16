@@ -1,6 +1,6 @@
-using ResolveDependencies.Console;
+using ResolveDependencies.Console.Processing;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Console;
 
 public class InputFileProcessorTests
 {

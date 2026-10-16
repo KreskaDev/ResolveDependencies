@@ -1,7 +1,7 @@
 using System.Globalization;
-using ResolveDependencies.Core;
+using ResolveDependencies.Core.Model;
 
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.Input;
 
 /// <summary>
 /// Reads the sanitized lines of one input file into an <see cref="InstallationRequest"/>.

@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Core;
+namespace ResolveDependencies.Core.Validation;
 
 /// <summary>
 /// Outcome of validating an installation request. Valid when no conflict was found.

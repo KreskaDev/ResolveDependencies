@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.CommandLine;
 
 /// <summary>
 /// Folders the application works on. <paramref name="OutputFolder"/> equals

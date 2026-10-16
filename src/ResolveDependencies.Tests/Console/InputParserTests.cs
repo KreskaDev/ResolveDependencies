@@ -1,6 +1,6 @@
-using ResolveDependencies.Console;
+using ResolveDependencies.Console.Input;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Console;
 
 /// <summary>
 /// Format rules applied by the parser on sanitized lines: F2, F3, F7, F8 and the install

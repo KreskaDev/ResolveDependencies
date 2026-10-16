@@ -1,4 +1,5 @@
-﻿using ResolveDependencies.Console;
+using ResolveDependencies.Console.CommandLine;
+using ResolveDependencies.Console.Processing;
 
 const string InputPrefix = "input";
 const string OutputPrefix = "output";

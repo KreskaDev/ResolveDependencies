@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.CommandLine;
 
 /// <summary>
 /// Thrown by <see cref="CommandLineParser"/> when the arguments do not form a valid call.

@@ -1,6 +1,6 @@
-using ResolveDependencies.Core;
+using ResolveDependencies.Core.Validation;
 
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.Processing;
 
 public enum Verdict
 {

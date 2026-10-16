@@ -1,6 +1,7 @@
+using ResolveDependencies.Console.Input;
 using ResolveDependencies.Core;
 
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.Processing;
 
 /// <summary>
 /// Runs the text of one input file through sanitizer, parser and resolver and turns the

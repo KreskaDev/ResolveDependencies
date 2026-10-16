@@ -1,7 +1,7 @@
-using ResolveDependencies.Console;
-using ResolveDependencies.Core;
+using ResolveDependencies.Console.Processing;
+using ResolveDependencies.Core.Validation;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Console;
 
 public class FileReportTests
 {

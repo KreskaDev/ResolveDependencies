@@ -1,6 +1,6 @@
 using ResolveDependencies.Core;
 
-namespace ResolveDependencies.Tests;
+namespace ResolveDependencies.Tests.Core;
 
 /// <summary>
 /// Golden cases from docs/story/goldenData. Each test builds the request exactly as the

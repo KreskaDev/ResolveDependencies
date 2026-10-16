@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Console;
+namespace ResolveDependencies.Console.Input;
 
 /// <summary>
 /// Thrown by <see cref="InputParser"/> when the input breaks a format rule. Carries the

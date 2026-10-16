@@ -1,4 +1,4 @@
-namespace ResolveDependencies.Core;
+namespace ResolveDependencies.Core.Validation;
 
 /// <summary>
 /// A package that is required in more than one version. <paramref name="Versions"/> lists

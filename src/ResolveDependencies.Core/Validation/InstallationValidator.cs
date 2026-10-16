@@ -1,4 +1,7 @@
-namespace ResolveDependencies.Core;
+using ResolveDependencies.Core.Graph;
+using ResolveDependencies.Core.Model;
+
+namespace ResolveDependencies.Core.Validation;
 
 /// <summary>
 /// Domain service checking the semantic rules: a breadth-first traversal of the
