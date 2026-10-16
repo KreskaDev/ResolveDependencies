@@ -50,18 +50,21 @@ Standard output:
 input000.txt: PASS
 input001.txt: FAIL
   B: 2, 1
-input002.txt: ERROR
-  line 4: expected an even number of fields, got 3
+input002.txt: FAIL
+  A: 1, 2
 ...
 ```
 
 An output file contains `PASS` or `FAIL`. A file that cannot be parsed gets `ERROR` on the
-first line and the reason with the line number on the second line, for example:
+first line and the reason with the line number on the second line. The golden data has no
+such file; a dependency line with an odd number of fields, for example, gives:
 
 ```
 ERROR
 line 4: expected an even number of fields, got 3
 ```
+
+and the summary line `inputNNN.txt: ERROR` followed by the same reason on the console.
 
 The exit code is `0` when every input file was processed, including files that produced
 `ERROR`. It is non-zero only for invalid arguments or I/O errors.
@@ -72,7 +75,8 @@ The exit code is `0` when every input file was processed, including files that p
 dotnet test src
 ```
 
-The test suite contains unit tests for the sanitizer, the parser and the resolver, and
+The test suite contains unit tests for every component of Core and Console (command line
+parser, sanitizer, parser, file processor, report, graph builder and resolver) and
 golden tests, one per `docs/story/goldenData/inputNNN.txt`: the sanitizer gets the file
 text transcribed into the test, the resolver gets the request built in code, and the
 verdict comes from `docs/story/goldenData/outputNNN.txt`. To add a case, add a new
