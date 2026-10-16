@@ -1,3 +1,11 @@
+---
+title: Architecture
+description: Structure of the solution, dependency direction between projects, core components, validation algorithm and testing strategy.
+related:
+  - docs/tech-design.md
+  - docs/test-design.md
+  - abstract.md
+---
 # Architecture
 
 This document covers only architecture.
