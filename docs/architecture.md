@@ -50,19 +50,3 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   failed to parse.
 - No dependency-injection container or logging framework; the app is small enough that a
   plain `Main` is clearer.
-
-## Testing strategy
-
-Tests live in `ResolveDependencies.Tests` and target Core only.
-
-1. **Unit tests – parser.** Each row of the "input format decisions" table has a dedicated
-   test, plus negative tests for malformed input.
-2. **Unit tests – validator.** Hand-written `InstallationRequest` instances covering: no
-   dependencies, direct conflict, transitive conflict, cycle, self-dependency, unreachable
-   conflicting dependency.
-3. **Golden tests.** A `[Theory]` driven by `MemberData` that enumerates `docs/story/goldenData/input*.txt`,
-   runs `DependencyResolver.Resolve` and compares against the matching `output*.txt`
-   (trimmed). The `docs/story/goldenData/` folder is linked into the test project and copied to the output
-   directory, so the repository remains the single source of truth for the cases.
-
-Adding a new case is therefore just adding an `inputNNN.txt` / `outputNNN.txt` pair.
