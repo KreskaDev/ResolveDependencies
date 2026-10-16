@@ -7,3 +7,9 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# .NET build output
+bin/
+obj/
+*.user
+TestResults/
