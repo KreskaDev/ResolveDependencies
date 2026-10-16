@@ -54,7 +54,8 @@ an empty line inside the file being kept.
 
 One case per rule F2, F3, F7 and F8 plus the install line field count, each feeding lines
 to `InputParser` in code. Negative cases assert that a `FormatException` is thrown and
-that it carries the correct line number.
+that it carries the correct line number and reason, because both end up in the output
+file.
 
 ## Resolver unit tests
 
@@ -68,8 +69,9 @@ order for one dependent, and rules of different versions kept apart.
 ## Console unit tests
 
 - `CommandLineParserTests` covers both argument shapes, options in any order, the two
-  styles mixed, and every usage error: no input folder, a third positional argument, a
-  folder given twice, an empty folder, an option without a value, an unknown option.
+  styles mixed, and every usage error with its message: no input folder, a third
+  positional argument, a folder given twice, an empty folder, an option without a value,
+  an unknown option.
 - `InstallationReportTests` asserts the output file content and the console lines for `PASS`,
   `FAIL` and `ERROR`.
 - `InstallationCheckerTests` runs raw text through the whole chain and asserts the verdict

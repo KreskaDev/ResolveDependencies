@@ -65,31 +65,41 @@ public class CommandLineParserTests
     [Fact]
     public void Parse_NoArguments_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse([]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse([]));
+
+        Assert.Equal("Input folder is required", exception.Message);
     }
 
     [Fact]
     public void Parse_OutputOptionWithoutInput_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["--output", "out"]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["--output", "out"]));
+
+        Assert.Equal("Input folder is required", exception.Message);
     }
 
     [Fact]
     public void Parse_ThreePositionalArguments_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["a", "b", "c"]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["a", "b", "c"]));
+
+        Assert.Equal("Unexpected argument: c", exception.Message);
     }
 
     [Fact]
     public void Parse_InputGivenTwice_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--input", "other"]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--input", "other"]));
+
+        Assert.Equal("The input folder is given more than once", exception.Message);
     }
 
     [Fact]
     public void Parse_OutputGivenTwice_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "out", "--output", "other"]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "out", "--output", "other"]));
+
+        Assert.Equal("The output folder is given more than once", exception.Message);
     }
 
     [Theory]
@@ -97,7 +107,9 @@ public class CommandLineParserTests
     [InlineData("--output")]
     public void Parse_OptionWithoutValue_ThrowsCommandLineException(string option)
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", option]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["in", option]));
+
+        Assert.Equal($"Missing value for {option}", exception.Message);
     }
 
     [Theory]
@@ -105,14 +117,19 @@ public class CommandLineParserTests
     [InlineData("  ")]
     public void Parse_EmptyFolder_ThrowsCommandLineException(string folder)
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse([folder]));
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", folder]));
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--output", folder]));
+        foreach (var args in new string[][] { [folder], ["in", folder], ["in", "--output", folder] })
+        {
+            var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(args));
+
+            Assert.Equal("A folder must not be empty", exception.Message);
+        }
     }
 
     [Fact]
     public void Parse_UnknownOption_ThrowsCommandLineException()
     {
-        Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--verbose"]));
+        var exception = Assert.Throws<CommandLineException>(() => _parser.Parse(["in", "--verbose"]));
+
+        Assert.Equal("Unknown option: --verbose", exception.Message);
     }
 }

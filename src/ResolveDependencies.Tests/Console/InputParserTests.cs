@@ -61,6 +61,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(4, exception.LineNumber);
+        Assert.Equal("expected an even number of fields, got 3", exception.Reason);
     }
 
     [Fact]
@@ -71,6 +72,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(4, exception.LineNumber);
+        Assert.Equal("expected at least 4 fields, got 2", exception.Reason);
     }
 
     [Fact]
@@ -92,6 +94,18 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(3, exception.LineNumber);
+        Assert.Equal("empty line", exception.Reason);
+    }
+
+    [Fact]
+    public void Parse_EmptyLineAsDependencyCount_ThrowsFormatException()
+    {
+        string[] lines = ["1", "A,1", "", "A,1,B,1"];
+
+        var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
+
+        Assert.Equal(3, exception.LineNumber);
+        Assert.Equal("empty line", exception.Reason);
     }
 
     [Fact]
@@ -102,6 +116,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(1, exception.LineNumber);
+        Assert.Equal("expected the number of packages", exception.Reason);
     }
 
     [Theory]
@@ -116,6 +131,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(1, exception.LineNumber);
+        Assert.Equal($"expected a non-negative integer, got '{count}'", exception.Reason);
     }
 
     [Fact]
@@ -126,6 +142,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(3, exception.LineNumber);
+        Assert.Equal("expected a non-negative integer, got 'x'", exception.Reason);
     }
 
     [Fact]
@@ -136,6 +153,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(3, exception.LineNumber);
+        Assert.Equal("expected 2 package lines, got 1", exception.Reason);
     }
 
     [Fact]
@@ -156,6 +174,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(3, exception.LineNumber);
+        Assert.Equal("expected a non-negative integer, got 'B,1'", exception.Reason);
     }
 
     [Fact]
@@ -166,6 +185,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(5, exception.LineNumber);
+        Assert.Equal("expected 2 dependency lines, got 1", exception.Reason);
     }
 
     [Fact]
@@ -176,6 +196,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(5, exception.LineNumber);
+        Assert.Equal("unexpected line after the dependency section", exception.Reason);
     }
 
     [Theory]
@@ -188,6 +209,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(2, exception.LineNumber);
+        Assert.Equal("empty field", exception.Reason);
     }
 
     [Fact]
@@ -198,6 +220,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(4, exception.LineNumber);
+        Assert.Equal("empty field", exception.Reason);
     }
 
     [Fact]
@@ -208,6 +231,7 @@ public class InputParserTests
         var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
 
         Assert.Equal(2, exception.LineNumber);
+        Assert.Equal("expected 2 fields, got 3", exception.Reason);
     }
 
     [Fact]
