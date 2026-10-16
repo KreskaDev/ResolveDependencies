@@ -70,9 +70,9 @@ order for one dependent, and rules of different versions kept apart.
 - `CommandLineParserTests` covers both argument shapes, options in any order, the two
   styles mixed, and every usage error: no input folder, a third positional argument, a
   folder given twice, an empty folder, an option without a value, an unknown option.
-- `FileReportTests` asserts the output file content and the console lines for `PASS`,
+- `InstallationReportTests` asserts the output file content and the console lines for `PASS`,
   `FAIL` and `ERROR`.
-- `InputFileProcessorTests` runs raw text through the whole chain and asserts the verdict
+- `InstallationCheckerTests` runs raw text through the whole chain and asserts the verdict
   and, for `ERROR`, the reason.
 
 ## Golden tests

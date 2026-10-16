@@ -34,7 +34,7 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   `InstallationRequest`, hands it to Core, writes the output files and the console
   summary. It contains no domain logic.
 - **Tests** reference Core and Console. Core is covered through its domain services,
-  Console through its command line parser, sanitizer, parser, file processor and report.
+  Console through its command line parser, sanitizer, parser, checker and report.
   Only `Program` has no unit test; file enumeration and output writing are checked by
   running the application against `docs/story/goldenData/`.
 
@@ -53,7 +53,7 @@ ResolveDependencies.Core/
 ResolveDependencies.Console/
   CommandLine/    CommandLineParser, CommandLineOptions, CommandLineException
   Input/          InputSanitizer, InputParser, InputFormatException  -- text to InstallationRequest
-  Processing/     InputFileProcessor, FileReport, Verdict            -- one file in, one report out
+  Processing/     InstallationChecker, InstallationReport, Verdict   -- one file in, one report out
   Program                                                            -- process, file system, exit code
 
 ResolveDependencies.Tests/

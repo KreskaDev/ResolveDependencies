@@ -153,12 +153,13 @@ console summary, and exit codes. Contains no domain logic.
   `InstallationRequest`, or throws an `InputFormatException` (a `FormatException`)
   carrying the one-based line number and the reason; its message is the
   `line <n>: <reason>` text written to the output file.
-- **`InputFileProcessor`** runs the text of one file through sanitizer, parser and
-  `DependencyResolver` and returns a `FileReport`. It catches `InputFormatException` and
-  turns it into an `ERROR` report; nothing else is caught.
-- **`FileReport`** is the outcome of one file: a `Verdict` (`Pass`, `Fail`, `Error`), the
-  conflicts for `Fail` and the reason for `Error`. It renders itself as the output file
-  content and as the console lines for a given file name.
+- **`InstallationChecker`** runs the text of one file through sanitizer, parser and
+  `DependencyResolver` and returns an `InstallationReport`. It catches
+  `InputFormatException` and turns it into an `ERROR` report; nothing else is caught.
+- **`InstallationReport`** is the answer to one installation request: a `Verdict`
+  (`Pass`, `Fail`, `Error`), the conflicts for `Fail` and the reason for `Error`. It
+  renders itself as the output file content and as the console lines for a given file
+  name.
 - **`CommandLineParser`** turns the arguments into `CommandLineOptions` (input and output
   folder) following the command line rules above, or throws a `CommandLineException`
   with the reason. It knows nothing about the file system.

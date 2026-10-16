@@ -32,13 +32,13 @@ try
         .Where(path => IsInputFile(Path.GetFileName(path)))
         .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
-    var processor = new InputFileProcessor();
+    var checker = new InstallationChecker();
     foreach (var inputPath in inputFiles)
     {
         var inputName = Path.GetFileName(inputPath);
         var outputName = string.Concat(OutputPrefix, inputName.AsSpan(InputPrefix.Length));
 
-        var report = processor.Process(File.ReadAllText(inputPath));
+        var report = checker.Check(File.ReadAllText(inputPath));
 
         File.WriteAllText(Path.Combine(options.OutputFolder, outputName), report.ToOutputFileContent());
         foreach (var line in report.ToConsoleLines(inputName))

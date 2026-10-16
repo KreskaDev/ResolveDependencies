@@ -10,17 +10,17 @@ public enum Verdict
 }
 
 /// <summary>
-/// Outcome of processing one input file, rendered to the output file and the console.
+/// Answer to one installation request, rendered to the output file and the console.
 /// <paramref name="Conflicts"/> is filled for <see cref="Verdict.Fail"/>,
 /// <paramref name="Reason"/> for <see cref="Verdict.Error"/>.
 /// </summary>
-public sealed record FileReport(Verdict Verdict, IReadOnlyList<Conflict> Conflicts, string? Reason)
+public sealed record InstallationReport(Verdict Verdict, IReadOnlyList<Conflict> Conflicts, string? Reason)
 {
-    public static FileReport Pass() => new(Verdict.Pass, [], null);
+    public static InstallationReport Pass() => new(Verdict.Pass, [], null);
 
-    public static FileReport Fail(IReadOnlyList<Conflict> conflicts) => new(Verdict.Fail, conflicts, null);
+    public static InstallationReport Fail(IReadOnlyList<Conflict> conflicts) => new(Verdict.Fail, conflicts, null);
 
-    public static FileReport Error(string reason) => new(Verdict.Error, [], reason);
+    public static InstallationReport Error(string reason) => new(Verdict.Error, [], reason);
 
     /// <summary>The verdict, followed by the reason for an error. Every line ends with <c>\n</c>.</summary>
     public string ToOutputFileContent() =>
