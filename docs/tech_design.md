@@ -32,6 +32,11 @@ p1,v1,p2,v2[,p3,v3...]   x M
 
 An install line has exactly two fields; any other count is a format error.
 
+Rules F4, F5 and F6 are applied by the sanitizer, which turns the raw text into trimmed
+lines without trailing empty lines. The remaining rules are applied by the parser, which
+works on those lines; an empty line inside a section reaches the parser and is rejected
+there.
+
 ## Format error handling
 
 A format error is any input the parser rejects: an empty line inside a section (F5), a
@@ -101,28 +106,41 @@ Diagnostics for usage and I/O errors go to standard error.
 ## Components
 
 ```
- text ──► InputParser ──► InstallationRequest ──► DependencyValidator ──► ValidationResult
+ text ──► InputSanitizer ──► lines ──► InputParser ──► InstallationRequest ──► DependencyResolver ──► ValidationResult
+ └──────────────── Console ────────────────┘                                  └───── Core ─────┘
 ```
 
 ### Core
 
-Pure functions, no I/O, no knowledge of files or folders.
+No I/O, no knowledge of files, folders or the text format.
 
-- **`InputParser`** (own namespace) implements rules F1-F8. It is the only place that
-  knows the text format. It receives the raw text of one input file and returns an
-  `InstallationRequest`, or throws a `FormatException` carrying the line number and reason.
-- **`DependencyValidator`** takes an `InstallationRequest` and returns a `ValidationResult`
-  with every conflict found, following `docs/algorithm_spec.md`. Pure function, no
-  exceptions for valid-but-failing inputs. Assumes the data is structurally valid and
+- **`DependencyResolver`** is the domain service. `Resolve(InstallationRequest) =>
+  ValidationResult` returns every conflict found, following `docs/algorithm_spec.md`. No
+  exceptions for valid-but-failing inputs. Assumes the request is structurally valid and
   does not validate the format; may check invariants (non-empty strings) and throw a
-  programming error if they are broken.
-- **`DependencyResolver`** (facade) composes parser and validator:
-  `Resolve(string input) => ValidationResult`. The one entry point the console application
-  calls. The validator stays available directly for callers that already hold an
-  `InstallationRequest`.
+  programming error if they are broken. It is an instance class so callers and tests work
+  with an object.
 
 ### Console application
 
-Responsible for arguments, enumerating and reading the input files, calling the facade,
-writing the output files and the console summary, and exit codes. Contains no parsing code
-and no domain logic.
+Responsible for arguments, enumerating and reading the input files, turning their text
+into the Core contract, calling the domain service, writing the output files and the
+console summary, and exit codes. Contains no domain logic.
+
+- **`InputSanitizer`** implements rules F4-F6. `Sanitize(string text) =>
+  IReadOnlyList<string>` returns the trimmed lines of one input file without trailing
+  empty lines. Empty lines inside the file are kept so the parser can report them.
+- **`InputParser`** implements the remaining format rules. It is the only place that
+  knows the line format. It receives the sanitized lines and returns an
+  `InstallationRequest`, or throws an `InputFormatException` (a `FormatException`)
+  carrying the one-based line number and the reason; its message is the
+  `line <n>: <reason>` text written to the output file.
+- **`InputFileProcessor`** runs the text of one file through sanitizer, parser and
+  `DependencyResolver` and returns a `FileReport`. It catches `InputFormatException` and
+  turns it into an `ERROR` report; nothing else is caught.
+- **`FileReport`** is the outcome of one file: a `Verdict` (`Pass`, `Fail`, `Error`), the
+  conflicts for `Fail` and the reason for `Error`. It renders itself as the output file
+  content and as the console lines for a given file name.
+- **`Program`** owns the command line: argument check, input folder existence, creation of
+  the output folder, enumeration of `input*.txt` in ordinal name order, reading and
+  writing files, and the exit code. I/O failures are written to standard error.

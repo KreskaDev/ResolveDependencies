@@ -70,9 +70,11 @@ The exit code is `0` when every input file was processed, including files that p
 dotnet test src
 ```
 
-The test suite contains unit tests for the parser and validator and golden tests that run
-every `docs/story/goldenData/inputNNN.txt` and compare the result with `docs/story/goldenData/outputNNN.txt`. To add a
-case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `docs/story/goldenData/`.
+The test suite contains unit tests for the sanitizer, the parser and the resolver, and
+golden tests, one per `docs/story/goldenData/inputNNN.txt`: the sanitizer gets the file
+text transcribed into the test, the resolver gets the request built in code, and the
+verdict comes from `docs/story/goldenData/outputNNN.txt`. To add a case, add a new
+`inputNNN.txt` / `outputNNN.txt` pair to `docs/story/goldenData/` and the matching tests.
 
 ## Before committing
 

@@ -26,16 +26,20 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
 ```
 
 - **Core** has no project references and no package references. It knows nothing about
-  files, folders or the console. Its public API accepts text (`string` / `TextReader`) and
-  returns plain result types.
+  files, folders, the console or the text format. Its public API accepts a structurally
+  valid `InstallationRequest` and returns a `ValidationResult`; whether the installation
+  is valid is the only question Core answers.
 - **Console** references Core. It adapts the file system and the command line to Core:
-  enumerates the input files, feeds their text to Core, writes the output files and the
-  console summary. It contains no domain logic and no parsing code.
-- **Tests** reference Core only. The console project is a thin adapter and is covered by
-  running it against `docs/story/goldenData/` rather than by unit tests.
+  enumerates the input files, sanitizes and parses their text into an
+  `InstallationRequest`, hands it to Core, writes the output files and the console
+  summary. It contains no domain logic.
+- **Tests** reference Core and Console. Core is covered through its domain service,
+  Console through its sanitizer and parser; file enumeration and output writing are
+  covered by running the application against `docs/story/goldenData/`.
 
 ## Console application
 
-- Single responsibility: adapt the file system and the command line to Core.
+- Responsibilities: arguments, reading and sanitizing the input files, parsing them into
+  the Core contract, writing the output files and the console summary, exit codes.
 - No dependency-injection container or logging framework; the app is small enough that a
   plain `Main` is clearer.
