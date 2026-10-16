@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="ResolveDependencies.Console/ResolveDependencies.Console.csproj" />
+    <Project Path="ResolveDependencies.Core/ResolveDependencies.Core.csproj" />
+    <Project Path="ResolveDependencies.Tests/ResolveDependencies.Tests.csproj" />
+  </Folder>
+</Solution>

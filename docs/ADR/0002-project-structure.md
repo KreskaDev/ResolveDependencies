@@ -27,7 +27,7 @@ should not add ceremony beyond what gives this separation.
 
 ## Decision
 
-Option 2. One solution file (`ResolveDependencies.slnx`), three projects under `src/`,
+Option 2. One solution file (`src/ResolveDependencies.slnx`), three projects under `src/`,
 golden data linked into the test project from the repository root.
 
 ## Consequences

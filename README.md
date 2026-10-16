@@ -15,7 +15,7 @@ Result: `PASS` or `FAIL`.
 ## Build
 
 ```
-dotnet build
+dotnet build src
 ```
 
 ## Run
@@ -49,7 +49,7 @@ are still processed, and the exit code is non-zero.
 ## Test
 
 ```
-dotnet test
+dotnet test src
 ```
 
 The test suite contains unit tests for the parser and validator and golden tests that run
@@ -58,6 +58,6 @@ case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `goldenData/`.
 
 ## Before committing
 
-- `dotnet build` and `dotnet test` must pass with zero warnings.
+- `dotnet build src` and `dotnet test src` must pass with zero warnings.
 - Running the console application against `goldenData/` must never modify files in that
   folder.

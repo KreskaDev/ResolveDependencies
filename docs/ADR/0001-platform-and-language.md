@@ -27,7 +27,7 @@ mainly affects how the solution is built, tested and read by a reviewer.
 ## Decision
 
 Option 1: .NET 10 (`net10.0`), C#, xUnit. Shared build settings (`Nullable`,
-`ImplicitUsings`, warnings treated as errors) live in `Directory.Build.props`.
+`ImplicitUsings`, warnings treated as errors) live in `src/Directory.Build.props`.
 
 ## Consequences
 
