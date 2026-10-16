@@ -1,0 +1,231 @@
+---
+title: Tech Design
+description: Semantic findings derived from the golden data, input and output format rules, data model, algorithm and test coverage.
+related:
+  - docs/architecture.md
+  - abstract.md
+  - goldenData/
+---
+# Tech Design
+
+---
+
+## 2. Semantic findings
+
+| # | Finding | Source |
+|---|---------|--------|
+| S1 | Dependencies are **transitive**. If `A,2` is installed and `A,2 -> C,3 -> D,4 -> B,1`, then `B,1` is required. | 005, 009 |
+| S2 | **Cycles** in the dependency graph are allowed and are not an error. The algorithm must keep a visited set. | 006 |
+| S3 | A package depending on **itself** in the same version is valid. | 003 |
+| S4 | Rules for **versions that are not installed** (neither directly nor transitively) are ignored. | 004, abstract example 1 |
+| S5 | One package version may have **several dependency rules**. If they point to different versions of the same package, the installation is invalid. | 001 |
+| S6 | A conflict may arise between two dependencies, not only between a dependency and the install list. | 007 |
+| S7 | A package that appears only as a dependency target (not on the install list) is installed and does not break the result unless it introduces a version conflict. | 004 |
+| S8 | Package and version are **arbitrary strings without a comma**, compared **exactly** (case-sensitive, no normalisation). Versions are not interpreted semantically; `1` and `1.0` are different versions. | 000 (`Beta-1`), assumption |
+| S9 | No dependency rule for a given version means that version has no dependencies. | 004 (`C,3`) |
+| S10 | Duplicates on the install list in the same version are allowed. The same package in two versions on the install list is `FAIL`. | assumption, no test |
+| S11 | An empty install list (N = 0) yields `PASS`. | assumption, no test |
+| S12 | One input file = one test case. | goldenData |
+
+---
+
+## 3. Input format
+
+### 3.1 Canonical format (what the core sees)
+
+The core does not read files. It receives an already parsed structure:
+
+```
+InstallRequest
+  packages:     list of pairs (package, version)            -- to be installed
+  dependencies: list of (package, version) -> list of (package, version)
+```
+
+All strings are non-empty and contain no comma. Several entries for the same
+`(package, version)` pair in `dependencies` are allowed; the core merges them.
+
+### 3.2 Text file format (what the console app reads)
+
+The description from `abstract.md`, extended with the deviations found in `goldenData/`.
+
+```
+N                        number of packages to install
+p,v                      x N
+M                        number of dependency lines
+p1,v1,p2,v2[,p3,v3...]   x M
+```
+
+Detailed rules:
+
+| # | Rule | Source |
+|---|------|--------|
+| F1 | Fields are separated by a comma. Package and version contain no comma. | abstract |
+| F2 | A dependency line has an **even number of fields, at least 4**. The first pair is the dependent package, every following pair is one of its dependencies. `B,2,A,1,C,1` means `B,2 -> A,1` and `B,2 -> C,1`. | 002 (deviation from abstract) |
+| F3 | The dependency section (the `M` line and what follows) **may be absent**. Treated as M = 0. | 008 |
+| F4 | Line endings: `\n`, `\r\n` or no trailing newline. All equivalent. | goldenData |
+| F5 | Empty lines (after trim) at the end of the file are ignored. Empty lines inside a section are a format error. | 003, 007 |
+| F6 | Leading and trailing whitespace of a line is trimmed. Whitespace inside a field is **not** trimmed; it is part of the name. | assumption |
+| F7 | N and M must be non-negative integers and must match the actual number of lines in the section. A mismatch is a format error. | goldenData (all consistent) |
+| F8 | An empty field (e.g. `,1` or `A,`) is a format error. | assumption |
+
+### 3.3 Format error handling
+
+A format error that the sanitizer cannot repair (F5 inside a section, F7, F8, odd number
+of fields, an install line with a field count other than 2):
+
+- stdout: `FAIL`
+- stderr: message with line number and problem description
+- exit code: `2`
+
+Rationale: the test runner compares stdout, so the result must be one of the two allowed
+values. The exit code and stderr make it possible to distinguish "invalid installation"
+from "broken file".
+
+To confirm: whether exit code `2` is acceptable for the runner. If not, fall back to `0`.
+
+---
+
+## 4. Output format
+
+- Exactly one line: `PASS` or `FAIL`, upper case, terminated with `\n`.
+- Nothing else on stdout. Diagnostics go to stderr only.
+- The `goldenData/output*.txt` files have inconsistent endings (missing newline, extra
+  blank lines). The test runner compares values **after trim()** on both sides.
+
+Exit codes:
+
+| Code | Meaning |
+|------|---------|
+| 0 | program finished normally, result on stdout (`PASS` or `FAIL`) |
+| 1 | I/O error (missing file, no permission) |
+| 2 | input format error (stdout contains `FAIL`) |
+
+---
+
+### 5.1 Core
+
+- Pure functions, no I/O, no knowledge of files or commas.
+- Input: `InstallRequest` (section 3.1). Assumes the data is structurally valid. Does not
+  validate the format. May check invariants (non-empty strings) and throw a programming
+  error if they are broken.
+- Output: `Result` = `Valid` or `Invalid(conflicts)`, where `conflicts` is a list of
+  packages with the set of required versions. Conflicts are useful for diagnostics and
+  tests; the console app prints only `PASS`/`FAIL`.
+- Unit-tested in isolation.
+
+### 5.2 Console app
+
+- Responsible for: arguments, reading a file or stdin, sanitize + parse, calling the core,
+  writing the result, exit codes.
+- **Sanitizer/Parser** implements rules F1-F8. It is the only place that knows the text
+  format. It receives raw text and returns an `InstallRequest` or a parse error with a
+  line number.
+- Invocation:
+  - `app <input-file>` reads the file,
+  - `app` without arguments reads stdin.
+  - Both variants are supported because the runner's invocation method is unknown.
+
+### 5.3 Data model
+
+```
+PackageRef   { Package: string, Version: string }   -- value type, exact comparison
+InstallRequest {
+  Packages:     PackageRef[]
+  Dependencies: Map<PackageRef, PackageRef[]>
+}
+Result = Valid | Invalid(Conflict[])
+Conflict { Package: string, Versions: Set<string> }
+```
+
+---
+
+## 6. Algorithm (core)
+
+Graph traversal of the dependency graph starting from the install list, with a
+per-package version check.
+
+```
+required  : Map<package, version>   -- package -> the only allowed version
+visited   : Set<PackageRef>
+queue     : Queue<PackageRef>  <- all Packages from InstallRequest
+conflicts : Map<package, Set<version>>
+
+while queue not empty:
+  ref = queue.pop()
+  if ref in visited: continue
+  visited.add(ref)
+
+  if required[ref.Package] exists and != ref.Version:
+      conflicts[ref.Package] += {required[ref.Package], ref.Version}
+      continue                      -- do not descend, the result is FAIL anyway
+  required[ref.Package] = ref.Version
+
+  for dep in Dependencies[ref] (or empty):
+      queue.push(dep)
+
+return conflicts.empty ? Valid : Invalid(conflicts)
+```
+
+Properties:
+
+- Complexity O(V + E), where V is the number of unique `(package, version)` pairs
+  reachable from the install list and E the number of edges between them.
+- `visited` guarantees termination on cycles (S2).
+- Self-dependency (S3) is handled naturally by `visited`.
+- Rules for unreachable versions (S4) are never visited.
+- The traversal could stop at the first conflict. Currently all conflicts are collected
+  because the cost is negligible and diagnostics are better. To be decided during
+  implementation (D4).
+
+---
+
+## 7. Tests
+
+### 7.1 Core unit tests
+
+One case per finding S1-S11 plus the examples from `abstract.md`. They do not read
+files; they build `InstallRequest` in code.
+
+### 7.2 Parser tests
+
+One case per rule F2-F8, including negative cases (expected parse error with the
+correct line number).
+
+### 7.3 Acceptance tests on `goldenData/`
+
+The runner iterates over `inputNNN.txt` / `outputNNN.txt` pairs, runs the full pipeline
+(parser + core) and compares the result with the expected value after `trim()`. Adding a
+new file to `goldenData/` automatically adds a case.
+
+Coverage of the current data:
+
+| Test | Expected | What it verifies |
+|------|----------|------------------|
+| 000 | PASS | version as an arbitrary string, no trailing newline in input, junk blank lines in output |
+| 001 | FAIL | S5, conflicting rules of one version |
+| 002 | FAIL | F2, line with three pairs |
+| 003 | PASS | S3 self-dependency, F5 trailing blank line |
+| 004 | PASS | S4, S7, S9 |
+| 005 | FAIL | S1 chain of depth 3 |
+| 006 | PASS | S2 cycle |
+| 007 | FAIL | S6 conflict between two dependencies |
+| 008 | PASS | F3 missing dependency section |
+| 009 | PASS | S1 long chain without conflict |
+
+Missing cases worth adding as own test files: N = 0, duplicate on the install list, two
+versions of the same package on the install list, blank line inside a section,
+mismatched N/M.
+
+---
+
+## 8. Open decisions
+
+| # | Question | Proposal | Status |
+|---|----------|----------|--------|
+| D1 | Language / platform | to be decided | open |
+| D2 | Project structure (separate core / console / tests modules) | yes, as in section 5 | proposal |
+| D3 | Exit code 2 on format error | yes, unless the runner requires 0 | proposal |
+| D4 | Collect all conflicts or stop at the first one | collect all | proposal |
+| D5 | Interpretation of a multi-pair dependency line (F2) | list of pairs | accepted based on test 002, worth confirming with the task author |
+
+---
