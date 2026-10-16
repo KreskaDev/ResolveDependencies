@@ -34,7 +34,7 @@ dotnet run --project src/ResolveDependencies.Console -- <path-to-folder>
 Example, using the test data shipped with the repository:
 
 ```
-dotnet run --project src/ResolveDependencies.Console -- testdata
+dotnet run --project src/ResolveDependencies.Console -- goldenData
 ```
 
 Output format:
@@ -56,5 +56,5 @@ dotnet test
 ```
 
 The test suite contains unit tests for the parser and validator and golden tests that run
-every `testdata/inputNNN.txt` and compare the result with `testdata/outputNNN.txt`. To add a
-case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `testdata/`.
+every `goldenData/inputNNN.txt` and compare the result with `goldenData/outputNNN.txt`. To add a
+case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `goldenData/`.

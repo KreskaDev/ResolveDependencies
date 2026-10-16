@@ -18,9 +18,9 @@
     <ProjectReference Include="..\ResolveDependencies.Core\ResolveDependencies.Core.csproj" />
   </ItemGroup>
 
-  <!-- Golden test cases: linked from the repository root so testdata/ stays the single source of truth. -->
+  <!-- Golden test cases: linked from the repository root so goldenData/ stays the single source of truth. -->
   <ItemGroup>
-    <Content Include="..\..\testdata\*.txt" Link="testdata\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\goldenData\*.txt" Link="goldenData\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

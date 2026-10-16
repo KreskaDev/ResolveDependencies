@@ -29,7 +29,7 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   files in a folder, reading them, calling Core and writing results to standard output.
   It contains no domain logic.
 - **Tests** reference Core only. The console project is a thin adapter and is covered by
-  running it against `testdata/` rather than by unit tests.
+  running it against `goldenData/` rather than by unit tests.
 
 ## Core design
 
@@ -75,7 +75,7 @@ ignored (see `input004`: `A,1 → B,1` is irrelevant because `A,2` is installed,
 
 ### Input format decisions
 
-The specification in `abstract.md` is minimal; the golden files in `testdata/` show the
+The specification in `abstract.md` is minimal; the golden files in `goldenData/` show the
 real edge cases. The parser is defined to handle all of them:
 
 | Case                                                     | Example                                          | Decision                                                                                                                        |
@@ -98,7 +98,7 @@ and continues with the next one.
 - Single responsibility: adapt the file system and the CLI to Core.
 - Input: path to a folder. Processes every `*.txt` file whose name starts with `input`,
   sorted by name, and prints one `PASS` / `FAIL` line per file to standard output. It does
-  **not** write `output*.txt` files, so running it against `testdata/` never modifies the
+  **not** write `output*.txt` files, so running it against `goldenData/` never modifies the
   golden files.
 - Exit code `0` when all files were processed, non-zero on usage errors or when any file
   failed to parse.
@@ -114,9 +114,9 @@ Tests live in `ResolveDependencies.Tests` and target Core only.
 2. **Unit tests – validator.** Hand-written `InstallationRequest` instances covering: no
    dependencies, direct conflict, transitive conflict, cycle, self-dependency, unreachable
    conflicting dependency.
-3. **Golden tests.** A `[Theory]` driven by `MemberData` that enumerates `testdata/input*.txt`,
+3. **Golden tests.** A `[Theory]` driven by `MemberData` that enumerates `goldenData/input*.txt`,
    runs `DependencyResolver.Resolve` and compares against the matching `output*.txt`
-   (trimmed). The `testdata/` folder is linked into the test project and copied to the output
+   (trimmed). The `goldenData/` folder is linked into the test project and copied to the output
    directory, so the repository remains the single source of truth for the cases.
 
 Adding a new case is therefore just adding an `inputNNN.txt` / `outputNNN.txt` pair.
