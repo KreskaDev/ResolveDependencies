@@ -3,27 +3,30 @@
 const string InputPrefix = "input";
 const string OutputPrefix = "output";
 
-if (args.Length is < 1 or > 2)
+CommandLineOptions options;
+try
 {
-    Console.Error.WriteLine("Usage: ResolveDependencies.Console <input-folder> [output-folder]");
+    options = new CommandLineParser().Parse(args);
+}
+catch (CommandLineException exception)
+{
+    Console.Error.WriteLine(exception.Message);
+    Console.Error.WriteLine(CommandLineParser.Usage);
     return 1;
 }
 
-var inputFolder = args[0];
-var outputFolder = args.Length == 2 ? args[1] : inputFolder;
-
-if (!Directory.Exists(inputFolder))
+if (!Directory.Exists(options.InputFolder))
 {
-    Console.Error.WriteLine($"Input folder not found: {inputFolder}");
+    Console.Error.WriteLine($"Input folder not found: {options.InputFolder}");
     return 1;
 }
 
 try
 {
-    Directory.CreateDirectory(outputFolder);
+    Directory.CreateDirectory(options.OutputFolder);
 
     var inputFiles = Directory
-        .EnumerateFiles(inputFolder, "*.txt")
+        .EnumerateFiles(options.InputFolder, "*.txt")
         .Where(path => Path.GetFileName(path).StartsWith(InputPrefix, StringComparison.Ordinal))
         .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
@@ -35,7 +38,7 @@ try
 
         var report = processor.Process(File.ReadAllText(inputPath));
 
-        File.WriteAllText(Path.Combine(outputFolder, outputName), report.ToOutputFileContent());
+        File.WriteAllText(Path.Combine(options.OutputFolder, outputName), report.ToOutputFileContent());
         foreach (var line in report.ToConsoleLines(inputName))
         {
             Console.WriteLine(line);
