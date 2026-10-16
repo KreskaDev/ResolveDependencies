@@ -139,6 +139,16 @@ public class InputParserTests
     }
 
     [Fact]
+    public void Parse_PackageCountFarAboveLineCount_ThrowsFormatException()
+    {
+        string[] lines = [int.MaxValue.ToString(), "A,1"];
+
+        var exception = Assert.Throws<InputFormatException>(() => _parser.Parse(lines));
+
+        Assert.Equal(3, exception.LineNumber);
+    }
+
+    [Fact]
     public void Parse_MorePackageLinesThanCount_ThrowsFormatException()
     {
         string[] lines = ["1", "A,1", "B,1", "0"];

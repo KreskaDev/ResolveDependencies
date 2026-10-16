@@ -18,7 +18,7 @@ public sealed class InputParser
         var index = 0;
 
         var packageCount = ParseCount(NextLine(lines, ref index, "the number of packages"), index);
-        var packages = new List<PackageVersion>(packageCount);
+        var packages = new List<PackageVersion>();
         for (var i = 0; i < packageCount; i++)
         {
             var line = NextLine(lines, ref index, $"{packageCount} package lines, got {i}");
