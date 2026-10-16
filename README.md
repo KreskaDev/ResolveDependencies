@@ -22,18 +22,19 @@ dotnet build src
 
 ## Run
 
-The console application takes two arguments: the input folder and, optionally, the output
-folder. Every file named `input*.txt` in the input folder is processed in name order. For
-each `inputNNN.txt` the application writes `outputNNN.txt` with the result and prints a
-summary line to standard output, followed by the conflicting packages for `FAIL` or the
-reason for `ERROR`.
+The console application takes the input folder and, optionally, the output folder, either
+positionally or as `--input` and `--output` options. Every file named `input*.txt` in the
+input folder is processed in name order. For each `inputNNN.txt` the application writes
+`outputNNN.txt` with the result and prints a summary line to standard output, followed by
+the conflicting packages for `FAIL` or the reason for `ERROR`.
 
 ```
 dotnet run --project src/ResolveDependencies.Console -- <input-folder> [output-folder]
+dotnet run --project src/ResolveDependencies.Console -- --input <folder> [--output <folder>]
 ```
 
-Without the second argument the output files are written next to the input files. Existing
-output files are overwritten.
+Without an output folder the output files are written next to the input files. A missing
+output folder is created. Existing output files are overwritten.
 
 Example, using the test data shipped with the repository without touching the expected
 results:

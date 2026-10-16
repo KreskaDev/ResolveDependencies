@@ -59,6 +59,16 @@ One case per rule S1-S11 plus the two examples from `docs/story/ResolveDependenc
 They build `InstallationRequest` with `InstallationRequestBuilder`. Each case asserts the
 verdict and, for an invalid installation, the conflicting packages with their versions.
 
+## Console unit tests
+
+- `CommandLineParserTests` covers both argument shapes, options in any order, the two
+  styles mixed, and every usage error: no input folder, a third positional argument, a
+  folder given twice, an option without a value, an unknown option.
+- `FileReportTests` asserts the output file content and the console lines for `PASS`,
+  `FAIL` and `ERROR`.
+- `InputFileProcessorTests` runs raw text through the whole chain and asserts the verdict
+  and, for `ERROR`, the reason.
+
 ## Golden tests
 
 One input file is one `[Fact]` in each of two classes. The test project does not read the

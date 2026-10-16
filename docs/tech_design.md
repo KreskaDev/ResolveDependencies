@@ -54,11 +54,17 @@ non-zero code.
 
 ```
 app <input-folder> [output-folder]
+app --input <folder> [--output <folder>]
 ```
 
+Each folder may be given positionally (input first, output second) or by its option, in
+any order, and the two styles may be mixed in one call. Each folder is given at most
+once; the input folder is required, the output folder defaults to the input folder. An
+option without a value, an unknown option (any argument starting with `--`), a third
+positional argument or a folder given twice is a usage error.
+
 Every `*.txt` file in the input folder whose name starts with `input` is processed in name
-order. The output folder defaults to the input folder. Any other argument shape is a usage
-error.
+order.
 
 ## Output files
 
@@ -141,6 +147,10 @@ console summary, and exit codes. Contains no domain logic.
 - **`FileReport`** is the outcome of one file: a `Verdict` (`Pass`, `Fail`, `Error`), the
   conflicts for `Fail` and the reason for `Error`. It renders itself as the output file
   content and as the console lines for a given file name.
-- **`Program`** owns the command line: argument check, input folder existence, creation of
-  the output folder, enumeration of `input*.txt` in ordinal name order, reading and
-  writing files, and the exit code. I/O failures are written to standard error.
+- **`CommandLineParser`** turns the arguments into `CommandLineOptions` (input and output
+  folder) following the command line rules above, or throws a `CommandLineException`
+  with the reason. It knows nothing about the file system.
+- **`Program`** owns the process: calls the command line parser and prints the reason and
+  the usage on a `CommandLineException`, checks that the input folder exists, creates the
+  output folder, enumerates `input*.txt` in ordinal name order, reads and writes the
+  files, and sets the exit code. I/O failures are written to standard error.
