@@ -3,8 +3,8 @@ title: Tech Design
 description: Semantic findings derived from the golden data, input and output format rules, data model, algorithm and test coverage.
 related:
   - docs/architecture.md
-  - abstract.md
-  - goldenData/
+  - docs/story/ResolveDependencies.md
+  - docs/story/goldenData/
 ---
 # Tech Design
 
@@ -42,7 +42,7 @@ All strings are non-empty and contain no comma. Several entries for the same
 
 ### 2.2 Text file format (what the console app reads)
 
-The description from `abstract.md`, extended with the deviations found in `goldenData/`.
+The description from `docs/story/ResolveDependencies.md`, extended with the deviations found in `docs/story/goldenData/`.
 
 ```
 N                        number of packages to install
@@ -81,7 +81,7 @@ from "broken file".
 
 - Exactly one line: `PASS` or `FAIL`, upper case, terminated with `\n`.
 - Nothing else on stdout. Diagnostics go to stderr only.
-- The `goldenData/output*.txt` files have inconsistent endings (missing newline, extra
+- The `docs/story/goldenData/output*.txt` files have inconsistent endings (missing newline, extra
   blank lines). The test runner compares values **after trim()** on both sides.
 
 Exit codes:
@@ -136,7 +136,7 @@ ignored (see `input004`: `A,1 → B,1` is irrelevant because `A,2` is installed,
 
 ### 4.4 Input format decisions
 
-The specification in `abstract.md` is minimal; the golden files in `goldenData/` show the
+The specification in `docs/story/ResolveDependencies.md` is minimal; the golden files in `docs/story/goldenData/` show the
 real edge cases. The parser is defined to handle all of them:
 
 | Case                                                     | Example                                          | Decision                                                                                                                        |
@@ -232,7 +232,7 @@ Properties:
 
 ### 7.1 Core unit tests
 
-One case per finding S1-S11 plus the examples from `abstract.md`. They do not read
+One case per finding S1-S11 plus the examples from `docs/story/ResolveDependencies.md`. They do not read
 files; they build `InstallRequest` in code.
 
 ### 7.2 Parser tests
@@ -240,11 +240,11 @@ files; they build `InstallRequest` in code.
 One case per rule F2-F8, including negative cases (expected parse error with the
 correct line number).
 
-### 7.3 Acceptance tests on `goldenData/`
+### 7.3 Acceptance tests on `docs/story/goldenData/`
 
 The runner iterates over `inputNNN.txt` / `outputNNN.txt` pairs, runs the full pipeline
 (parser + core) and compares the result with the expected value after `trim()`. Adding a
-new file to `goldenData/` automatically adds a case.
+new file to `docs/story/goldenData/` automatically adds a case.
 
 Coverage of the current data:
 

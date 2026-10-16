@@ -4,7 +4,7 @@ description: Structure of the solution, dependency direction between projects, c
 related:
   - docs/tech-design.md
   - docs/test-design.md
-  - abstract.md
+  - docs/story/ResolveDependencies.md
 ---
 # Architecture
 
@@ -37,14 +37,14 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   files in a folder, reading them, calling Core and writing results to standard output.
   It contains no domain logic.
 - **Tests** reference Core only. The console project is a thin adapter and is covered by
-  running it against `goldenData/` rather than by unit tests.
+  running it against `docs/story/goldenData/` rather than by unit tests.
 
 ## Console application
 
 - Single responsibility: adapt the file system and the CLI to Core.
 - Input: path to a folder. Processes every `*.txt` file whose name starts with `input`,
   sorted by name, and prints one `PASS` / `FAIL` line per file to standard output. It does
-  **not** write `output*.txt` files, so running it against `goldenData/` never modifies the
+  **not** write `output*.txt` files, so running it against `docs/story/goldenData/` never modifies the
   golden files.
 - Exit code `0` when all files were processed, non-zero on usage errors or when any file
   failed to parse.
@@ -60,9 +60,9 @@ Tests live in `ResolveDependencies.Tests` and target Core only.
 2. **Unit tests – validator.** Hand-written `InstallationRequest` instances covering: no
    dependencies, direct conflict, transitive conflict, cycle, self-dependency, unreachable
    conflicting dependency.
-3. **Golden tests.** A `[Theory]` driven by `MemberData` that enumerates `goldenData/input*.txt`,
+3. **Golden tests.** A `[Theory]` driven by `MemberData` that enumerates `docs/story/goldenData/input*.txt`,
    runs `DependencyResolver.Resolve` and compares against the matching `output*.txt`
-   (trimmed). The `goldenData/` folder is linked into the test project and copied to the output
+   (trimmed). The `docs/story/goldenData/` folder is linked into the test project and copied to the output
    directory, so the repository remains the single source of truth for the cases.
 
 Adding a new case is therefore just adding an `inputNNN.txt` / `outputNNN.txt` pair.

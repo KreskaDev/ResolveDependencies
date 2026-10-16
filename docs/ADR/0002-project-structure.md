@@ -34,5 +34,5 @@ golden data linked into the test project from the repository root.
 
 - Core has no project or package references and no I/O.
 - The console project is not unit-tested; it is exercised by running it against
-  `goldenData/`.
-- Adding a golden case means adding a file pair in `goldenData/`, nothing else.
+  `docs/story/goldenData/`.
+- Adding a golden case means adding a file pair in `docs/story/goldenData/`, nothing else.

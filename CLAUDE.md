@@ -35,7 +35,7 @@ title: Architecture
 description: Structure of the solution, components, algorithm and testing strategy.
 related:
   - docs/tech-design.md
-  - abstract.md
+  - docs/story/ResolveDependencies.md
 ---
 ```
 
@@ -60,4 +60,5 @@ date: 2026-10-16
   only place in the repository where a status is recorded.
 - `date`: the day the record was created or its status last changed, ISO 8601.
 
-Files outside `docs/` (`README.md`, `abstract.md`, `CLAUDE.md`) have no front matter.
+Files outside `docs/` (`README.md`, `CLAUDE.md`) have no front matter. `docs/story/` holds the
+original task material verbatim and is exempt as well.

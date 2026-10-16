@@ -9,7 +9,7 @@ required in more than one version.
 
 Result: `PASS` or `FAIL`.
 
-- The problem statement is in [`abstract.md`](abstract.md).
+- The problem statement is in [`ResolveDependencies.md`](docs/story/ResolveDependencies.md).
 - The design is described in [`architecture.md`](docs/architecture.md).
 
 ## Build
@@ -31,7 +31,7 @@ dotnet run --project src/ResolveDependencies.Console -- <path-to-folder>
 Example, using the test data shipped with the repository:
 
 ```
-dotnet run --project src/ResolveDependencies.Console -- goldenData
+dotnet run --project src/ResolveDependencies.Console -- docs/story/goldenData
 ```
 
 Output format:
@@ -53,11 +53,11 @@ dotnet test src
 ```
 
 The test suite contains unit tests for the parser and validator and golden tests that run
-every `goldenData/inputNNN.txt` and compare the result with `goldenData/outputNNN.txt`. To add a
-case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `goldenData/`.
+every `docs/story/goldenData/inputNNN.txt` and compare the result with `docs/story/goldenData/outputNNN.txt`. To add a
+case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `docs/story/goldenData/`.
 
 ## Before committing
 
 - `dotnet build src` and `dotnet test src` must pass with zero warnings.
-- Running the console application against `goldenData/` must never modify files in that
+- Running the console application against `docs/story/goldenData/` must never modify files in that
   folder.

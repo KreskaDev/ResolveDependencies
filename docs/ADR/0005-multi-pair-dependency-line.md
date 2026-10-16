@@ -4,16 +4,16 @@ description: How a dependency line with more than four fields is interpreted.
 status: Proposed
 date: 2026-10-16
 related:
-  - abstract.md
-  - goldenData/input002.txt
+  - docs/story/ResolveDependencies.md
+  - docs/story/goldenData/input002.txt
   - docs/tech-design.md
 ---
 # Multi-pair dependency line
 
 ## Context
 
-`abstract.md` defines a dependency line as `p1,v1,p2,v2`. The golden file
-`goldenData/input002.txt` contains the line `B,2,A,1,C,1` followed by `C,1,A,2`, with
+`docs/story/ResolveDependencies.md` defines a dependency line as `p1,v1,p2,v2`. The golden file
+`docs/story/goldenData/input002.txt` contains the line `B,2,A,1,C,1` followed by `C,1,A,2`, with
 expected output `FAIL`. `B,2` is the only installed package.
 
 ## Options

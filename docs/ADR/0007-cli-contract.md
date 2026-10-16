@@ -36,6 +36,6 @@ Option 1, as already documented in `README.md`.
 
 - `tech-design.md` sections 4 and 5.2 describe option 2 and must be aligned once this
   record is accepted.
-- Running the application against `goldenData/` never writes into that folder.
+- Running the application against `docs/story/goldenData/` never writes into that folder.
 - If the invocation style of the external runner becomes known and differs, this record
   is superseded rather than edited.
