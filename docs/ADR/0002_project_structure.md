@@ -1,11 +1,6 @@
 ---
 title: Project structure
 description: How the solution is split into projects and what each project may reference.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/architecture.md
-  - docs/ADR/0001-platform-and-language.md
 ---
 # Project structure
 

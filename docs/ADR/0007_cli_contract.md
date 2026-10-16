@@ -1,13 +1,6 @@
 ---
 title: Command-line contract
 description: What the console application accepts as input and how it prints results.
-status: Proposed
-date: 2026-10-16
-related:
-  - README.md
-  - docs/architecture.md
-  - docs/tech-design.md
-  - docs/ADR/0003-format-error-handling.md
 ---
 # Command-line contract
 
@@ -15,7 +8,7 @@ related:
 
 The task does not say how the program is invoked. The golden data is a folder of
 `inputNNN.txt` / `outputNNN.txt` pairs. `README.md` and `architecture.md` describe a
-folder-based interface; `tech-design.md` describes a single-file or stdin interface with a
+folder-based interface; `tech_design.md` describes a single-file or stdin interface with a
 bare `PASS` / `FAIL` on stdout.
 
 ## Options
@@ -34,7 +27,7 @@ Option 1, as already documented in `README.md`.
 
 ## Consequences
 
-- `tech-design.md` sections 4 and 5.2 describe option 2 and must be aligned once this
+- `tech_design.md` sections 4 and 5.2 describe option 2 and must be aligned once this
   record is accepted.
 - Running the application against `docs/story/goldenData/` never writes into that folder.
 - If the invocation style of the external runner becomes known and differs, this record

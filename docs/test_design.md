@@ -3,12 +3,12 @@ title: Test Design
 description: Naming conventions for test classes and test methods.
 related:
   - docs/architecture.md
-  - docs/tech-design.md
+  - docs/tech_design.md
 ---
 # Test Design
 
 This document describes the conventions used in the test project. Which cases are tested
-is described in [`architecture.md`](architecture.md) and [`tech-design.md`](tech-design.md).
+is described in [`architecture.md`](architecture.md) and [`tech_design.md`](tech_design.md).
 
 ## Naming
 

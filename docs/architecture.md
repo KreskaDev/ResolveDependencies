@@ -2,8 +2,8 @@
 title: Architecture
 description: Structure of the solution, dependency direction between projects, core components, validation algorithm and testing strategy.
 related:
-  - docs/tech-design.md
-  - docs/test-design.md
+  - docs/tech_design.md
+  - docs/test_design.md
   - docs/story/ResolveDependencies.md
 ---
 # Architecture

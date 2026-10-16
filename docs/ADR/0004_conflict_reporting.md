@@ -1,11 +1,6 @@
 ---
 title: Conflict reporting
 description: Whether the validator stops at the first version conflict or collects all of them, and what it returns.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/architecture.md
-  - docs/tech-design.md
 ---
 # Conflict reporting
 
@@ -37,5 +32,5 @@ architecture.
 - The console output maps the enum to `PASS` / `FAIL` at the boundary.
 - Unit tests check the verdict only; which conflict triggered it is covered by the
   shape of the test input.
-- `tech-design.md` sections 5.1, 5.3 and 6 describe option 2 and must be aligned once
+- `tech_design.md` sections 5.1, 5.3 and 6 describe option 2 and must be aligned once
   this record is accepted.

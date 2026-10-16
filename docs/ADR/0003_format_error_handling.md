@@ -1,12 +1,6 @@
 ---
 title: Format error handling
 description: What the console application prints and returns when an input file cannot be parsed.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/architecture.md
-  - docs/tech-design.md
-  - docs/ADR/0007-cli-contract.md
 ---
 # Format error handling
 
@@ -38,6 +32,6 @@ non-zero code when at least one file failed to parse or on a usage error.
 ## Consequences
 
 - `README.md` already documents this behaviour.
-- `tech-design.md` section 3.3 and the exit code table in section 4 must be rewritten
+- `tech_design.md` section 3.3 and the exit code table in section 4 must be rewritten
   once this record is accepted.
 - The parser must carry the line number in its exception so the message is useful.

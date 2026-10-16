@@ -1,12 +1,6 @@
 ---
 title: Multi-pair dependency line
 description: How a dependency line with more than four fields is interpreted.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/story/ResolveDependencies.md
-  - docs/story/goldenData/input002.txt
-  - docs/tech-design.md
 ---
 # Multi-pair dependency line
 
@@ -30,7 +24,7 @@ expected output `FAIL`. `B,2` is the only installed package.
 
 ## Decision
 
-Option 3. The format rule is documented in `tech-design.md` (F2) and in the input
+Option 3. The format rule is documented in `tech_design.md` (F2) and in the input
 format table of `architecture.md`. This interpretation was not confirmed with the task
 author; it is the only one that produces the expected result for a semantic reason.
 

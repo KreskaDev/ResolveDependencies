@@ -1,12 +1,6 @@
 ---
 title: Parser location
 description: Whether the text parser lives in the Core library or in the console application.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/architecture.md
-  - docs/tech-design.md
-  - docs/ADR/0002-project-structure.md
 ---
 # Parser location
 
@@ -14,7 +8,7 @@ related:
 
 Two documents disagree. `architecture.md` places `InputParser` in Core: Core accepts
 text and returns a result, the console only handles the file system, and the test project
-references Core alone. `tech-design.md` places the sanitizer/parser in the console
+references Core alone. `tech_design.md` places the sanitizer/parser in the console
 application so that Core receives only already valid structures.
 
 ## Options
@@ -35,7 +29,7 @@ validator directly for callers that already hold an `InstallationRequest`.
 
 ## Consequences
 
-- `tech-design.md` sections 3.1 and 5.2 must be reworded once this record is accepted:
+- `tech_design.md` sections 3.1 and 5.2 must be reworded once this record is accepted:
   "what the core sees" becomes the validator's input, not Core's only input.
 - The console project contains no parsing code and needs no unit tests.
 - Golden tests can call the Core facade with the file text and nothing else.

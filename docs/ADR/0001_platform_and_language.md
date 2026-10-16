@@ -1,10 +1,6 @@
 ---
 title: Platform and language
 description: Which runtime, language and test framework the solution is built with.
-status: Proposed
-date: 2026-10-16
-related:
-  - docs/architecture.md
 ---
 # Platform and language
 
