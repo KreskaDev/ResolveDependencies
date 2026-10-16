@@ -81,8 +81,6 @@ Rationale: the test runner compares stdout, so the result must be one of the two
 values. The exit code and stderr make it possible to distinguish "invalid installation"
 from "broken file".
 
-To confirm: whether exit code `2` is acceptable for the runner. If not, fall back to `0`.
-
 ---
 
 ## 4. Output format
@@ -173,9 +171,6 @@ Properties:
 - `visited` guarantees termination on cycles (S2).
 - Self-dependency (S3) is handled naturally by `visited`.
 - Rules for unreachable versions (S4) are never visited.
-- The traversal could stop at the first conflict. Currently all conflicts are collected
-  because the cost is negligible and diagnostics are better. To be decided during
-  implementation (D4).
 
 ---
 
@@ -216,16 +211,3 @@ Missing cases worth adding as own test files: N = 0, duplicate on the install li
 versions of the same package on the install list, blank line inside a section,
 mismatched N/M.
 
----
-
-## 8. Open decisions
-
-| # | Question | Proposal | Status |
-|---|----------|----------|--------|
-| D1 | Language / platform | to be decided | open |
-| D2 | Project structure (separate core / console / tests modules) | yes, as in section 5 | proposal |
-| D3 | Exit code 2 on format error | yes, unless the runner requires 0 | proposal |
-| D4 | Collect all conflicts or stop at the first one | collect all | proposal |
-| D5 | Interpretation of a multi-pair dependency line (F2) | list of pairs | accepted based on test 002, worth confirming with the task author |
-
----
