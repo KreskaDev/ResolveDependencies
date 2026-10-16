@@ -1,19 +1,16 @@
 # Resolve dependencies
 
-## 1. Goal
+## Goal
 
 The program receives an installation description (a list of packages to install plus
 dependency rules) and answers whether the installation is valid. An installation is
 invalid when, after taking the transitive closure of the dependencies, any package is
 required in more than one version.
-Checks whether a set of software packages can be installed without requiring two different versions of the same package.
-
 
 Result: `PASS` or `FAIL`.
 
-
-- The problem statement is in [`Abstract.md`](abstract.md)
-- The design is described in [`Architecture.md`](docs/architecture.md).
+- The problem statement is in [`abstract.md`](abstract.md).
+- The design is described in [`architecture.md`](docs/architecture.md).
 
 ## Build
 
@@ -58,3 +55,4 @@ dotnet test
 The test suite contains unit tests for the parser and validator and golden tests that run
 every `goldenData/inputNNN.txt` and compare the result with `goldenData/outputNNN.txt`. To add a
 case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `goldenData/`.
+
