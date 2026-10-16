@@ -97,5 +97,7 @@ return conflicts                    -- valid when empty
 - `visited` guarantees termination on cycles (S2) and self-dependencies (S3).
 - Rules for unreachable versions (S4) are never visited; `input004` installs `A,2`, so the
   rules of `A,1` play no part.
-- The result lists every conflicting package with the set of versions required of it,
-  in the order the versions were met.
+- The result lists every conflicting package the traversal meets, with the set of
+  versions required of it in the order they were met. Requirements of a conflicting
+  version are not followed, so a conflict reachable only through them is not reported;
+  the verdict is unaffected because the installation is already invalid.
