@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ResolveDependencies.Core\ResolveDependencies.Core.csproj" />
+    <ProjectReference Include="..\ResolveDependencies.Console\ResolveDependencies.Console.csproj" />
   </ItemGroup>
 
 </Project>
