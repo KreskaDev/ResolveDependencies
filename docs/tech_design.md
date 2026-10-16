@@ -66,21 +66,33 @@ Detailed rules:
 
 ### 2.3 Format error handling
 
-A format error that the sanitizer cannot repair (F5 inside a section, F7, F8, odd number
-of fields, an install line with a field count other than 2):
+A format error is any input the parser rejects: an empty line inside a section (F5), a
+count that is not a non-negative integer or does not match the section (F7), an empty
+field (F8), an odd number of fields in a dependency line, or an install line with a field
+count other than two. The parser stops at the first error and reports its line number and
+reason.
 
-- stdout: `FAIL`
-- stderr: message with line number and problem description
-- exit code: `2`
-
-Rationale: the test runner compares stdout, so the result must be one of the two allowed
-values. The exit code and stderr make it possible to distinguish "invalid installation"
-from "broken file".
+A format error is a regular per-file result, not a program failure. The file gets an
+output file with `ERROR` on the first line and the reason on the second line (section 3).
+The remaining files are still processed and the exit code stays `0`. Only invalid
+arguments and I/O errors make the program exit with a non-zero code.
 
 ## 3. Output format
 
-- Exactly one line: `PASS` or `FAIL`, upper case, terminated with `\n`.
-- Nothing else on stdout. Diagnostics go to stderr only.
+For every `inputNNN.txt` the program writes `outputNNN.txt`: the input file name with the
+`input` prefix replaced by `output`. The file is written next to the input file unless the
+`--output <folder>` option names another folder. An existing output file is overwritten.
+
+| Result | File content |
+|--------|--------------|
+| Installation valid | `PASS` |
+| Installation invalid (a package is required in more than one version) | `FAIL` |
+| Input file malformed | `ERROR`, followed by a second line `line <n>: <reason>` |
+
+- Result keywords are upper case. Every line is terminated with `
+`.
+- stdout gets one summary line per file: `inputNNN.txt: PASS`, `FAIL` or `ERROR`.
+  Diagnostics for I/O errors go to stderr.
 - The `docs/story/goldenData/output*.txt` files have inconsistent endings (missing newline, extra
   blank lines). The test runner compares values **after trim()** on both sides.
 
@@ -88,9 +100,8 @@ Exit codes:
 
 | Code | Meaning |
 |------|---------|
-| 0 | program finished normally, result on stdout (`PASS` or `FAIL`) |
-| 1 | I/O error (missing file, no permission) |
-| 2 | input format error (stdout contains `FAIL`) |
+| 0 | all input files processed; every file has an output file, including `ERROR` results |
+| 1 | invalid arguments or I/O error (folder missing, file unreadable, output folder not writable) |
 
 ## 4. Core design
 

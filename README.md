@@ -22,31 +22,44 @@ dotnet build src
 
 ## Run
 
-The console application takes one argument: the path to a folder containing input files.
-Every file named `input*.txt` in that folder is processed in name order and one line per file
-is printed to standard output.
+The console application takes the path to a folder containing input files. Every file named
+`input*.txt` in that folder is processed in name order. For each `inputNNN.txt` the
+application writes `outputNNN.txt` with the result and prints one summary line to standard
+output.
 
 ```
-dotnet run --project src/ResolveDependencies.Console -- <path-to-folder>
+dotnet run --project src/ResolveDependencies.Console -- <path-to-folder> [--output <folder>]
 ```
 
-Example, using the test data shipped with the repository:
+Output files are written next to the input files. With `--output <folder>` they are written
+into that folder instead. Existing output files are overwritten.
+
+Example, using the test data shipped with the repository without touching the expected
+results:
 
 ```
-dotnet run --project src/ResolveDependencies.Console -- docs/story/goldenData
+dotnet run --project src/ResolveDependencies.Console -- docs/story/goldenData --output out
 ```
 
-Output format:
+Standard output:
 
 ```
 input000.txt: PASS
 input001.txt: FAIL
+input002.txt: ERROR
 ...
 ```
 
-The application only prints results; it never writes or modifies files in the given folder.
-A file that cannot be parsed is reported as an error on standard error, the remaining files
-are still processed, and the exit code is non-zero.
+An output file contains `PASS` or `FAIL`. A file that cannot be parsed gets `ERROR` on the
+first line and the reason with the line number on the second line, for example:
+
+```
+ERROR
+line 4: expected an even number of fields, got 3
+```
+
+The exit code is `0` when every input file was processed, including files that produced
+`ERROR`. It is non-zero only for invalid arguments or I/O errors.
 
 ## Test
 
@@ -61,5 +74,5 @@ case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `docs/story/goldenData/
 ## Before committing
 
 - `dotnet build src` and `dotnet test src` must pass with zero warnings.
-- Running the console application against `docs/story/goldenData/` must never modify files in that
-  folder.
+- The files in `docs/story/goldenData/` are the expected results. When running the console
+  application against that folder, pass `--output` so they are not overwritten.

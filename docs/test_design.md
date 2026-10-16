@@ -50,8 +50,9 @@ correct line number).
 ### 7.3 Acceptance tests on `docs/story/goldenData/`
 
 The runner iterates over `inputNNN.txt` / `outputNNN.txt` pairs, runs the full pipeline
-(parser + core) and compares the result with the expected value after `trim()`. Adding a
-new file to `docs/story/goldenData/` automatically adds a case.
+(parser + core), renders the result in the output file format (`PASS`, `FAIL`, or `ERROR`
+with the reason on the second line) and compares it with the expected file after `trim()`
+on both sides. Adding a new file to `docs/story/goldenData/` automatically adds a case.
 
 Coverage of the current data:
 
@@ -69,8 +70,8 @@ Coverage of the current data:
 | 009 | PASS | S1 long chain without conflict |
 
 Missing cases worth adding as own test files: N = 0, duplicate on the install list, two
-versions of the same package on the install list, blank line inside a section,
-mismatched N/M.
+versions of the same package on the install list, and `ERROR` cases: blank line inside a
+section, mismatched N/M, odd number of fields.
 
 ## Testing strategy
 

@@ -43,10 +43,11 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
 
 - Single responsibility: adapt the file system and the CLI to Core.
 - Input: path to a folder. Processes every `*.txt` file whose name starts with `input`,
-  sorted by name, and prints one `PASS` / `FAIL` line per file to standard output. It does
-  **not** write `output*.txt` files, so running it against `docs/story/goldenData/` never modifies the
-  golden files.
-- Exit code `0` when all files were processed, non-zero on usage errors or when any file
-  failed to parse.
+  sorted by name.
+- Output: for every `inputNNN.txt` an `outputNNN.txt` containing `PASS`, `FAIL` or `ERROR`
+  with the reason on the second line. Written next to the input file, or into the folder
+  given by `--output <folder>`. One summary line per file goes to standard output.
+- Exit code `0` when all files were processed, including files that produced `ERROR`;
+  non-zero on invalid arguments or I/O errors.
 - No dependency-injection container or logging framework; the app is small enough that a
   plain `Main` is clearer.
