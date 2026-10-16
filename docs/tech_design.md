@@ -63,8 +63,9 @@ once; the input folder is required, the output folder defaults to the input fold
 option without a value, an unknown option (any argument starting with `--`), a third
 positional argument or a folder given twice is a usage error.
 
-Every `*.txt` file in the input folder whose name starts with `input` is processed in name
-order.
+Every file in the input folder whose name starts with `input` and ends with `.txt` is
+processed in ordinal name order. The match is exact, as in `docs/story/goldenData/`:
+`Input000.txt` or `input000.TXT` is not an input file on any platform.
 
 ## Output files
 

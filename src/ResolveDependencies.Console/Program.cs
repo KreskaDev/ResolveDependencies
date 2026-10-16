@@ -3,6 +3,7 @@ using ResolveDependencies.Console.Processing;
 
 const string InputPrefix = "input";
 const string OutputPrefix = "output";
+const string InputExtension = ".txt";
 
 CommandLineOptions options;
 try
@@ -27,8 +28,8 @@ try
     Directory.CreateDirectory(options.OutputFolder);
 
     var inputFiles = Directory
-        .EnumerateFiles(options.InputFolder, "*.txt")
-        .Where(path => Path.GetFileName(path).StartsWith(InputPrefix, StringComparison.Ordinal))
+        .EnumerateFiles(options.InputFolder)
+        .Where(path => IsInputFile(Path.GetFileName(path)))
         .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
     var processor = new InputFileProcessor();
@@ -53,3 +54,8 @@ catch (Exception exception) when (exception is IOException or UnauthorizedAccess
     Console.Error.WriteLine(exception.Message);
     return 1;
 }
+
+// The name must match the golden data exactly: lower-case prefix and extension.
+static bool IsInputFile(string fileName) =>
+    fileName.StartsWith(InputPrefix, StringComparison.Ordinal)
+    && fileName.EndsWith(InputExtension, StringComparison.Ordinal);
