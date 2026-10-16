@@ -1,17 +1,11 @@
 # Architecture
 
-This document describes the structure of the solution and the design decisions behind it.
-It intentionally covers only architecture. Build, run and usage instructions live in
-[`README.md`](../README.md); the problem statement lives in [`abstract.md`](../abstract.md).
+This document covers only architecture.
 
 ## Goals and constraints
 
-- Solve the "resolve dependencies" task: given packages to install and a dependency graph,
-  decide whether the installation is valid (`PASS`) or requires two versions of the same
-  package (`FAIL`).
 - Keep the core logic independent of any I/O so it can be unit-tested in isolation.
-- Keep the solution small. No external runtime dependencies; only the test framework is pulled
-  in as a package.
+- Keep the solution small.
 
 ## Technology
 
@@ -19,25 +13,8 @@ It intentionally covers only architecture. Build, run and usage instructions liv
 |-------------------|---------------------------------------------------------------------|
 | Platform          | .NET 10 (`net10.0`), C#                                             |
 | Test framework    | xUnit                                                               |
-| Project layout    | Single solution (`.slnx`), three projects in `src/`; shared build settings in `Directory.Build.props` |
 | Language features | `Nullable` and `ImplicitUsings` enabled; warnings treated as errors |
 
-## Repository layout
-
-```
-ResolveDependencies.slnx
-Directory.Build.props                shared build settings (TFM, nullable, warnings as errors)
-abstract.md                          problem statement
-README.md                            build / run / test instructions
-docs/
-  architecture.md                    this document
-testdata/
-  inputNNN.txt / outputNNN.txt       golden test cases (input + expected result)
-src/
-  ResolveDependencies.Core/          class library: parsing + validation logic
-  ResolveDependencies.Console/       console app: CLI entry point, file system I/O
-  ResolveDependencies.Tests/         xUnit tests for Core (unit + golden tests)
-```
 
 ## Projects and dependency direction
 
@@ -143,12 +120,3 @@ Tests live in `ResolveDependencies.Tests` and target Core only.
    directory, so the repository remains the single source of truth for the cases.
 
 Adding a new case is therefore just adding an `inputNNN.txt` / `outputNNN.txt` pair.
-
-## Out of scope
-
-- Version range / semantic-version comparison. Versions are opaque strings compared for
-  exact equality, as the task defines them.
-- Reporting *which* conflict caused a `FAIL`. The required output is only `PASS` / `FAIL`;
-  the validator could be extended to return the conflicting pair without changing the
-  architecture.
-- Parallel processing of input files. Inputs are tiny.

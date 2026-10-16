@@ -1,12 +1,19 @@
 # Resolve dependencies
 
-Checks whether a set of software packages can be installed without requiring two different
-versions of the same package. The problem statement is in [`abstract.md`](abstract.md);
-the design is described in [`docs/architecture.md`](docs/architecture.md).
+## 1. Goal
 
-## Requirements
+The program receives an installation description (a list of packages to install plus
+dependency rules) and answers whether the installation is valid. An installation is
+invalid when, after taking the transitive closure of the dependencies, any package is
+required in more than one version.
+Checks whether a set of software packages can be installed without requiring two different versions of the same package.
 
-- .NET SDK 10.0 or newer
+
+Result: `PASS` or `FAIL`.
+
+
+- The problem statement is in [`Abstract.md`](abstract.md)
+- The design is described in [`Architecture.md`](docs/architecture.md).
 
 ## Build
 
@@ -51,22 +58,3 @@ dotnet test
 The test suite contains unit tests for the parser and validator and golden tests that run
 every `testdata/inputNNN.txt` and compare the result with `testdata/outputNNN.txt`. To add a
 case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `testdata/`.
-
-## Input file format
-
-```
-N              number of packages to install
-p,v            N lines: package p in version v
-M              number of dependencies (section may be omitted)
-p1,v1,p2,v2    M lines: p1,v1 depends on p2,v2 (a line may list several p,v requirements)
-```
-
-## Project layout
-
-```
-src/ResolveDependencies.Core      library with the parsing and validation logic
-src/ResolveDependencies.Console   command-line entry point
-src/ResolveDependencies.Tests     xUnit tests
-testdata/                         golden input/output pairs
-docs/                             architecture notes
-```
