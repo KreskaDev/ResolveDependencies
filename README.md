@@ -10,7 +10,7 @@ required in more than one version.
 Result: `PASS` or `FAIL`.
 
 - The problem statement is in [`ResolveDependencies.md`](docs/story/ResolveDependencies.md).
-- The design is described in [`architecture.md`](docs/architecture.md).
+- The design is described in [`architecture.md`](docs/architecture.md), [`tech_design.md`](docs/tech_design.md) and [`algorithm_spec.md`](docs/algorithm_spec.md).
 
 ## Build
 
