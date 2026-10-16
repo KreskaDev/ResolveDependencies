@@ -89,8 +89,7 @@ For every `inputNNN.txt` the program writes `outputNNN.txt`: the input file name
 | Installation invalid (a package is required in more than one version) | `FAIL` |
 | Input file malformed | `ERROR`, followed by a second line `line <n>: <reason>` |
 
-- Result keywords are upper case. Every line is terminated with `
-`.
+- Result keywords are upper case. Every line is terminated with `\n`.
 - stdout gets one summary line per file: `inputNNN.txt: PASS`, `FAIL` or `ERROR`.
   Diagnostics for I/O errors go to stderr.
 - The `docs/story/goldenData/output*.txt` files have inconsistent endings (missing newline, extra
@@ -159,9 +158,7 @@ real edge cases. The parser is defined to handle all of them:
 | Cycle                                                    | `input006`: `A,1 → B,2 → A,1`                    | Allowed; handled by the visited check.                                                                                          |
 | Dependency of a version that is never installed          | `input009`: `A,1,B,2` while `A,2` is installed   | Ignored; only reachable versions are followed.                                                                                  |
 | Package or version containing `,`                        | n/a                                              | Not supported, guaranteed by the task statement.                                                                                |
-| Line endings                                             | n/a                                              | `
-` and `
-` both accepted.                                                                                                  |
+| Line endings                                             | n/a                                              | `\n` and `\r\n` both accepted.                                                                                                  |
 
 Anything else (non-numeric count, fewer lines than declared, odd number of fields) is a
 `FormatException` from the parser, which the console app reports as an error for that file
