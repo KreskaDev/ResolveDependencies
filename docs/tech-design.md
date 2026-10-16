@@ -8,9 +8,7 @@ related:
 ---
 # Tech Design
 
----
-
-## 2. Semantic findings
+## 1. Semantic findings
 
 | # | Finding | Source |
 |---|---------|--------|
@@ -27,11 +25,9 @@ related:
 | S11 | An empty install list (N = 0) yields `PASS`. | assumption, no test |
 | S12 | One input file = one test case. | goldenData |
 
----
+## 2. Input format
 
-## 3. Input format
-
-### 3.1 Canonical format (what the core sees)
+### 2.1 Canonical format (what the core sees)
 
 The core does not read files. It receives an already parsed structure:
 
@@ -44,7 +40,7 @@ InstallRequest
 All strings are non-empty and contain no comma. Several entries for the same
 `(package, version)` pair in `dependencies` are allowed; the core merges them.
 
-### 3.2 Text file format (what the console app reads)
+### 2.2 Text file format (what the console app reads)
 
 The description from `abstract.md`, extended with the deviations found in `goldenData/`.
 
@@ -68,7 +64,7 @@ Detailed rules:
 | F7 | N and M must be non-negative integers and must match the actual number of lines in the section. A mismatch is a format error. | goldenData (all consistent) |
 | F8 | An empty field (e.g. `,1` or `A,`) is a format error. | assumption |
 
-### 3.3 Format error handling
+### 2.3 Format error handling
 
 A format error that the sanitizer cannot repair (F5 inside a section, F7, F8, odd number
 of fields, an install line with a field count other than 2):
@@ -81,9 +77,7 @@ Rationale: the test runner compares stdout, so the result must be one of the two
 values. The exit code and stderr make it possible to distinguish "invalid installation"
 from "broken file".
 
----
-
-## 4. Output format
+## 3. Output format
 
 - Exactly one line: `PASS` or `FAIL`, upper case, terminated with `\n`.
 - Nothing else on stdout. Diagnostics go to stderr only.
@@ -98,12 +92,12 @@ Exit codes:
 | 1 | I/O error (missing file, no permission) |
 | 2 | input format error (stdout contains `FAIL`) |
 
----
+## 4. Components
 
-### 5.1 Core
+### 4.1 Core
 
 - Pure functions, no I/O, no knowledge of files or commas.
-- Input: `InstallRequest` (section 3.1). Assumes the data is structurally valid. Does not
+- Input: `InstallRequest` (section 2.1). Assumes the data is structurally valid. Does not
   validate the format. May check invariants (non-empty strings) and throw a programming
   error if they are broken.
 - Output: `Result` = `Valid` or `Invalid(conflicts)`, where `conflicts` is a list of
@@ -111,7 +105,7 @@ Exit codes:
   tests; the console app prints only `PASS`/`FAIL`.
 - Unit-tested in isolation.
 
-### 5.2 Console app
+### 4.2 Console app
 
 - Responsible for: arguments, reading a file or stdin, sanitize + parse, calling the core,
   writing the result, exit codes.
@@ -123,7 +117,7 @@ Exit codes:
   - `app` without arguments reads stdin.
   - Both variants are supported because the runner's invocation method is unknown.
 
-### 5.3 Data model
+### 4.3 Data model
 
 ```
 PackageRef   { Package: string, Version: string }   -- value type, exact comparison
@@ -135,9 +129,7 @@ Result = Valid | Invalid(Conflict[])
 Conflict { Package: string, Versions: Set<string> }
 ```
 
----
-
-## 6. Algorithm (core)
+## 5. Algorithm (core)
 
 Graph traversal of the dependency graph starting from the install list, with a
 per-package version check.
@@ -172,21 +164,19 @@ Properties:
 - Self-dependency (S3) is handled naturally by `visited`.
 - Rules for unreachable versions (S4) are never visited.
 
----
+## 6. Tests
 
-## 7. Tests
-
-### 7.1 Core unit tests
+### 6.1 Core unit tests
 
 One case per finding S1-S11 plus the examples from `abstract.md`. They do not read
 files; they build `InstallRequest` in code.
 
-### 7.2 Parser tests
+### 6.2 Parser tests
 
 One case per rule F2-F8, including negative cases (expected parse error with the
 correct line number).
 
-### 7.3 Acceptance tests on `goldenData/`
+### 6.3 Acceptance tests on `goldenData/`
 
 The runner iterates over `inputNNN.txt` / `outputNNN.txt` pairs, runs the full pipeline
 (parser + core) and compares the result with the expected value after `trim()`. Adding a
