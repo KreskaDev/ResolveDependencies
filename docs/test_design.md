@@ -55,9 +55,12 @@ that it carries the correct line number.
 
 ## Resolver unit tests
 
-One case per rule S1-S11 plus the two examples from `docs/story/ResolveDependencies.md`.
-They build `InstallationRequest` with `InstallationRequestBuilder`. Each case asserts the
-verdict and, for an invalid installation, the conflicting packages with their versions.
+`DependencyResolverRuleTests` holds one case per rule S1-S11 plus the two examples from
+`docs/story/ResolveDependencies.md`, built with `InstallationRequestBuilder` and run
+through `DependencyResolver`. Each case asserts the verdict and, for an invalid
+installation, the conflicting packages with their versions in the order the traversal
+meets them. `DependencyGraphBuilderTests` covers the graph: a version without rules, rule
+order for one dependent, and rules of different versions kept apart.
 
 ## Console unit tests
 

@@ -49,12 +49,13 @@ cases. The source column names the golden file number or marks an assumption.
 
 ## Algorithm
 
-Graph traversal of the dependency graph starting from the install list, with a
+Breadth-first traversal of the dependency graph starting from the install list, with a
 per-package version check.
 
 1. Build a lookup `(package, version) -> list of required (package, version)` from the
    rules (adjacency list of a directed graph).
-2. Start a traversal (BFS or DFS) from every entry of the install list.
+2. Start a breadth-first traversal from the entries of the install list, in list order.
+   The order in which versions are met, and therefore reported, follows from it.
 3. Maintain `required: package -> version`, the only version allowed for each package that
    will end up installed, and `visited`, the set of `(package, version)` pairs already
    processed.

@@ -120,12 +120,22 @@ Diagnostics for usage and I/O errors go to standard error.
 
 No I/O, no knowledge of files, folders or the text format.
 
-- **`DependencyResolver`** is the domain service. `Resolve(InstallationRequest) =>
-  ValidationResult` returns every conflict found, following `docs/algorithm_spec.md`. No
-  exceptions for valid-but-failing inputs. Assumes the request is structurally valid and
-  does not validate the format; may check invariants (non-empty strings) and throw a
-  programming error if they are broken. It is an instance class so callers and tests work
-  with an object.
+All services are instance classes so callers and tests work with objects. None of them
+throws for a valid-but-failing input; they assume the request is structurally valid and do
+not validate the format.
+
+- **`DependencyGraph`** is the directed graph of the rules: `RequirementsOf(PackageVersion)`
+  returns the package versions a version requires, in rule order, or an empty list for a
+  version without rules.
+- **`DependencyGraphBuilder`** is the domain service building the graph from the
+  `Dependency` list. Several rules for one dependent are read together as its requirement
+  list.
+- **`InstallationValidator`** is the domain service checking the semantic rules:
+  `Validate(packages, graph) => ValidationResult` runs the traversal of
+  `docs/algorithm_spec.md` from the install list and returns every conflict found.
+- **`DependencyResolver`** composes the two: `Resolve(InstallationRequest) =>
+  ValidationResult` builds the graph from the request's rules and validates the request's
+  packages against it. It is the entry point the console application calls.
 
 ### Console application
 
