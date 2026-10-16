@@ -1,14 +1,20 @@
 namespace ResolveDependencies.Core;
 
 /// <summary>
-/// Domain service. Checks whether an installation request is valid: after following the
-/// dependency rules transitively from the install list, no package may be required in
-/// more than one version. Assumes the request is structurally valid.
+/// Domain service answering whether an installation request is valid: builds the
+/// dependency graph from the rules and validates the install list against it. Assumes
+/// the request is structurally valid.
 /// </summary>
-public sealed class DependencyResolver
+public sealed class DependencyResolver(DependencyGraphBuilder graphBuilder, InstallationValidator validator)
 {
+    public DependencyResolver()
+        : this(new DependencyGraphBuilder(), new InstallationValidator())
+    {
+    }
+
     public ValidationResult Resolve(InstallationRequest request)
     {
-        throw new NotImplementedException();
+        var graph = graphBuilder.Build(request.Dependencies);
+        return validator.Validate(request.Packages, graph);
     }
 }
