@@ -46,7 +46,8 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   sorted by name.
 - Output: for every `inputNNN.txt` an `outputNNN.txt` containing `PASS`, `FAIL` or `ERROR`
   with the reason on the second line. Written next to the input file, or into the folder
-  given by `--output <folder>`. One summary line per file goes to standard output.
+  given by `--output <folder>`. Standard output gets one summary line per file, followed
+  by the conflicting packages for `FAIL` or the reason for `ERROR`.
 - Exit code `0` when all files were processed, including files that produced `ERROR`;
   non-zero on invalid arguments or I/O errors.
 - No dependency-injection container or logging framework; the app is small enough that a

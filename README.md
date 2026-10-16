@@ -24,8 +24,8 @@ dotnet build src
 
 The console application takes the path to a folder containing input files. Every file named
 `input*.txt` in that folder is processed in name order. For each `inputNNN.txt` the
-application writes `outputNNN.txt` with the result and prints one summary line to standard
-output.
+application writes `outputNNN.txt` with the result and prints a summary line to standard
+output, followed by the conflicting packages for `FAIL` or the reason for `ERROR`.
 
 ```
 dotnet run --project src/ResolveDependencies.Console -- <path-to-folder> [--output <folder>]
@@ -46,7 +46,9 @@ Standard output:
 ```
 input000.txt: PASS
 input001.txt: FAIL
+  B: 2, 1
 input002.txt: ERROR
+  line 4: expected an even number of fields, got 3
 ...
 ```
 

@@ -90,7 +90,10 @@ For every `inputNNN.txt` the program writes `outputNNN.txt`: the input file name
 | Input file malformed | `ERROR`, followed by a second line `line <n>: <reason>` |
 
 - Result keywords are upper case. Every line is terminated with `\n`.
-- stdout gets one summary line per file: `inputNNN.txt: PASS`, `FAIL` or `ERROR`.
+- stdout gets one summary line per file: `inputNNN.txt: PASS`, `FAIL` or `ERROR`,
+  followed by diagnostic lines indented with two spaces. For `FAIL` one line per
+  conflicting package, `<package>: <version>, <version>, ...`, versions in input order.
+  For `ERROR` the reason, `line <n>: <reason>`. `PASS` has no diagnostic lines.
   Diagnostics for I/O errors go to stderr.
 - The `docs/story/goldenData/output*.txt` files have inconsistent endings (missing newline, extra
   blank lines). The test runner compares values **after trim()** on both sides.
@@ -111,7 +114,8 @@ Exit codes:
 | `PackageVersion`      | `record struct` | `(Name, Version)` pair. Value equality is what the whole algorithm relies on.            |
 | `Dependency`          | `record`        | `Dependent` → `Requirement`, both `PackageVersion`.                                      |
 | `InstallationRequest` | `record`        | Parsed input: list of packages to install + list of dependencies.                        |
-| `ValidationResult`    | `enum`          | `Pass` / `Fail`. Mapped to the `PASS` / `FAIL` strings only at the output boundary.      |
+| `Conflict`            | `record`        | A package name with the set of versions required of it.                                  |
+| `ValidationResult`    | `record`        | List of `Conflict`s; valid when the list is empty. Mapped to `PASS` / `FAIL` only at the output boundary. |
 
 ### 4.2 Components
 
@@ -121,8 +125,9 @@ Exit codes:
 
 - **`InputParser`** – turns the raw text of one input file into an `InstallationRequest`.
   Pure function, throws a `FormatException` with a line number on malformed input.
-- **`DependencyValidator`** – takes an `InstallationRequest` and decides `Pass` / `Fail`.
-  Pure function, no exceptions for valid-but-failing inputs.
+- **`DependencyValidator`** – takes an `InstallationRequest` and returns a
+  `ValidationResult` with every conflict found. Pure function, no exceptions for
+  valid-but-failing inputs.
 - **`DependencyResolver`** (facade) – `Resolve(string input) => ValidationResult`. The one
   entry point the console app calls; composes parser and validator.
 
@@ -134,11 +139,13 @@ Exit codes:
 3. Maintain `Dictionary<string packageName, string version>` of everything that will end up
    installed (requested packages plus everything transitively required).
 4. When visiting a `PackageVersion`:
-   - if the name is already present with a **different** version → `Fail`, stop;
+   - if the name is already present with a **different** version → record a conflict for
+     that package name and do not descend into its requirements;
    - if it is already present with the **same** version → already visited, skip
      (this is what makes cycles and self-dependencies terminate);
    - otherwise record it and enqueue its requirements.
-5. If the traversal finishes without a conflict → `Pass`.
+5. The traversal always runs to completion so that every conflicting package is reported.
+   The result is valid when no conflict was recorded.
 
 Complexity is linear in the number of packages and dependencies. Only versions that are
 actually reachable from the install list matter; dependencies of versions nobody installs are
@@ -172,9 +179,9 @@ and continues with the next one.
 - Input: `InstallRequest` (section 2.1). Assumes the data is structurally valid. Does not
   validate the format. May check invariants (non-empty strings) and throw a programming
   error if they are broken.
-- Output: `Result` = `Valid` or `Invalid(conflicts)`, where `conflicts` is a list of
-  packages with the set of required versions. Conflicts are useful for diagnostics and
-  tests; the console app prints only `PASS`/`FAIL`.
+- Output: `ValidationResult`, a list of `Conflict`s (package name with the set of required
+  versions), valid when empty. The output file gets only `PASS`/`FAIL`; the conflicts are
+  printed on the console for diagnostics and asserted in unit tests.
 - Unit-tested in isolation.
 
 ### 5.2 Console app
@@ -197,8 +204,8 @@ InstallRequest {
   Packages:     PackageRef[]
   Dependencies: Map<PackageRef, PackageRef[]>
 }
-Result = Valid | Invalid(Conflict[])
-Conflict { Package: string, Versions: Set<string> }
+ValidationResult { Conflicts: Conflict[] }           -- valid when Conflicts is empty
+Conflict         { Package: string, Versions: Set<string> }
 ```
 
 ## 6. Algorithm (core)
@@ -225,7 +232,7 @@ while queue not empty:
   for dep in Dependencies[ref] (or empty):
       queue.push(dep)
 
-return conflicts.empty ? Valid : Invalid(conflicts)
+return ValidationResult(conflicts)
 ```
 
 Properties:
