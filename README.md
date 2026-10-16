@@ -56,3 +56,8 @@ The test suite contains unit tests for the parser and validator and golden tests
 every `goldenData/inputNNN.txt` and compare the result with `goldenData/outputNNN.txt`. To add a
 case, add a new `inputNNN.txt` / `outputNNN.txt` pair to `goldenData/`.
 
+## Before committing
+
+- `dotnet build` and `dotnet test` must pass with zero warnings.
+- Running the console application against `goldenData/` must never modify files in that
+  folder.
