@@ -37,6 +37,30 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
   Console through its sanitizer and parser; file enumeration and output writing are
   covered by running the application against `docs/story/goldenData/`.
 
+## Folder layout
+
+Each project is split into folders by responsibility; the namespace of a type equals its
+folder path. Entry points stay at the project root.
+
+```
+ResolveDependencies.Core/
+  Model/          PackageVersion, Dependency, InstallationRequest   -- the contract Core receives
+  Graph/          DependencyGraph, DependencyGraphBuilder           -- adjacency list of the rules
+  Validation/     InstallationValidator, ValidationResult, Conflict -- semantic rules and their outcome
+  DependencyResolver                                                -- composes graph and validation
+
+ResolveDependencies.Console/
+  CommandLine/    CommandLineParser, CommandLineOptions, CommandLineException
+  Input/          InputSanitizer, InputParser, InputFormatException  -- text to InstallationRequest
+  Processing/     InputFileProcessor, FileReport                     -- one file in, one report out
+  Program                                                            -- process, file system, exit code
+
+ResolveDependencies.Tests/
+  Core/           tests of the Core services
+  Console/        tests of the Console components
+  InstallationRequestBuilder                                         -- shared test helper
+```
+
 ## Console application
 
 - Responsibilities: arguments, reading and sanitizing the input files, parsing them into
