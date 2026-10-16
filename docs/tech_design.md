@@ -81,8 +81,9 @@ arguments and I/O errors make the program exit with a non-zero code.
 ## 3. Output format
 
 For every `inputNNN.txt` the program writes `outputNNN.txt`: the input file name with the
-`input` prefix replaced by `output`. The file is written next to the input file unless the
-`--output <folder>` option names another folder. An existing output file is overwritten.
+`input` prefix replaced by `output`. The file is written into the output folder given as the
+second argument, or next to the input file when that argument is absent. An existing output
+file is overwritten.
 
 | Result | File content |
 |--------|--------------|
@@ -193,12 +194,11 @@ and continues with the next one.
 
 ### 5.2 Console app
 
-- Responsible for: arguments, reading a file or stdin, calling the core, writing the
-  result, exit codes. Contains no parsing code.
-- Invocation:
-  - `app <input-file>` reads the file,
-  - `app` without arguments reads stdin.
-  - Both variants are supported because the runner's invocation method is unknown.
+- Responsible for: arguments, enumerating and reading the input files, calling the core,
+  writing the output files and the console summary, exit codes. Contains no parsing code.
+- Invocation: `app <input-folder> [output-folder]`. Every `input*.txt` in the input folder
+  is processed in name order. The output folder defaults to the input folder. Any other
+  argument shape is a usage error with exit code `1`.
 
 ### 5.3 Data model
 

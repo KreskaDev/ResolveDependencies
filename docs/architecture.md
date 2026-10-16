@@ -42,12 +42,12 @@ ResolveDependencies.Console ──► ResolveDependencies.Core ◄── Resolve
 ## Console application
 
 - Single responsibility: adapt the file system and the CLI to Core.
-- Input: path to a folder. Processes every `*.txt` file whose name starts with `input`,
-  sorted by name.
+- Arguments: the input folder and an optional output folder. Processes every `*.txt` file
+  in the input folder whose name starts with `input`, sorted by name.
 - Output: for every `inputNNN.txt` an `outputNNN.txt` containing `PASS`, `FAIL` or `ERROR`
-  with the reason on the second line. Written next to the input file, or into the folder
-  given by `--output <folder>`. Standard output gets one summary line per file, followed
-  by the conflicting packages for `FAIL` or the reason for `ERROR`.
+  with the reason on the second line. Written into the output folder, or next to the input
+  file when no output folder is given. Standard output gets one summary line per file,
+  followed by the conflicting packages for `FAIL` or the reason for `ERROR`.
 - Exit code `0` when all files were processed, including files that produced `ERROR`;
   non-zero on invalid arguments or I/O errors.
 - No dependency-injection container or logging framework; the app is small enough that a
