@@ -11,7 +11,7 @@ public sealed class InputSanitizer
     public IReadOnlyList<string> Sanitize(string text)
     {
         var lines = text
-            .ReplaceLineEndings("\n")
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
             .Split('\n')
             .Select(line => line.Trim())
             .ToList();

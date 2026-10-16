@@ -5,7 +5,7 @@ namespace ResolveDependencies.Tests.Console;
 /// <summary>
 /// Golden cases from docs/story/goldenData. Each test holds the exact text of one
 /// inputNNN.txt, including its line endings and trailing blank lines, and asserts the
-/// clean lines the parser receives. The last three tests cover the sanitizing rules the
+/// clean lines the parser receives. The remaining tests cover the sanitizing rules the
 /// golden files do not exercise.
 /// </summary>
 public class InputSanitizerTests
@@ -183,6 +183,16 @@ public class InputSanitizerTests
         var lines = _sanitizer.Sanitize(text);
 
         Assert.Equal(["1", "A,1", "1", "A,1,B,1"], lines);
+    }
+
+    [Fact]
+    public void Sanitize_LoneCarriageReturn_IsNotALineEnding()
+    {
+        const string text = "1\rA,1\r\n";
+
+        var lines = _sanitizer.Sanitize(text);
+
+        Assert.Equal(["1\rA,1"], lines);
     }
 
     [Fact]

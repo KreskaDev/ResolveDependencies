@@ -44,8 +44,8 @@ DependencyResolverTests.Resolve_TransitiveConflict_ReturnsConflict
 ## Sanitizer unit tests
 
 One case per rule F4-F6, each feeding text to `InputSanitizer` in code and asserting the
-returned lines: `\n` endings, trimming of every line, and an empty line inside the file
-being kept.
+returned lines: `\n` endings, a lone `\r` not ending a line, trimming of every line, and
+an empty line inside the file being kept.
 
 ## Parser unit tests
 
