@@ -14,6 +14,8 @@ Result: `PASS` or `FAIL`.
 
 ## Build
 
+Requires .NET SDK 10.0 or newer.
+
 ```
 dotnet build src
 ```
